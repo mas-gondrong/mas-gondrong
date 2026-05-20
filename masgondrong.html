@@ -1,0 +1,636 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALFA - Online Shopping</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+
+  <style>
+    .hero {
+  position: relative;
+  background-image: url('gambar.jpg'); /* ganti nama file sesuai gambar kamu */
+  background-size: cover;
+  background-position: center;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+/* Layer gelap biar tulisan kebaca */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1;
+}
+
+/* Biar logo & teks ada di atas layer gelap */
+.hero .logo,
+.hero h1,
+.hero p {
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin: 10px 0 5px;
+}
+
+.hero p {
+  font-size: 16px;
+  margin: 2px 0;
+}
+
+.hero .logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid white;
+}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #0052cc;
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+    }
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid white;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      margin: 5px 0;
+      font-size: 24px;
+    }
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+    
+    /* LAYOUT 2 KOLOM */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .product {
+      background: yellow;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* WRAPPER BUAT TOMBOL INFO */
+    .product-img-wrap {
+      position: relative;
+    }
+    
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .product h3 {
+      margin: 10px 0 5px 0;
+      font-size: 16px;
+    }
+    
+    .product p {
+      margin: 5px 0;
+      color: #333;
+      font-size: 14px;
+    }
+    
+    .btn-wa {
+      display: inline-block;
+      background: #25D366;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    /* TOMBOL INFO DI POJOK GAMBAR */
+    .btn-info {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    /* JENDELA MODAL DESKRIPSI */
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  
+  justify-content: center;  /* <-- harus di dalam .modal */
+  align-items: center;      /* <-- harus di dalam .modal */
+} /* <-- kurung kurawal tutupnya pindah ke sini */
+    
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 320px;
+      text-align: left;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .modal-content h4 {
+      margin-top: 0;
+      color: #0052cc;
+      text-align: center;
+    }
+    
+    .modal-content p {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    
+    .close-btn {
+      background: #0052cc;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+      width: 100%;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .info-box {
+  background: white;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  line-height: 1.5;
+}
+.info-box h3 {
+  margin: 0 0 8px 0;
+  color: #0052cc;
+  font-size: 16px;
+}
+.info-box p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+    /* Lightbox / Zoom Foto */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+}
+
+.lightbox .close-lightbox {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.product-img-wrap img {
+  cursor: zoom-in;
+}
+    /* === HEADER HERO === */
+.hero {
+  position: relative;
+  background-image: url('gambar.jpg'); /* ganti nama file sesuai gambar kamu */
+  background-size: cover;
+  background-position: center;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+/* Layer gelap biar tulisan kebaca */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1;
+}
+
+/* Biar logo & teks ada di atas layer gelap */
+.hero .logo,
+.hero h1,
+.hero p {
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin: 10px 0 5px;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 16px;
+  margin: 2px 0;
+}
+
+.hero .logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid white;
+  object-fit: cover;
+}
+
+/* === RESPONSIF UNTUK HP KECIL === */
+@media (max-width: 480px) {
+  .hero {
+    height: 220px;
+    padding: 15px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .hero .logo {
+    width: 65px;
+    height: 65px;
+  }
+}
+  </style>
+</head>
+  <!-- LIGHTBOX UNTUK ZOOM FOTO -->
+<div id="lightbox" class="lightbox" onclick="tutupLightbox()">
+  <span class="close-lightbox">&times;</span>
+  <img id="lightbox-img" src="">
+</div>
+
+<body>
+  
+ <header class="hero">
+  <img src="logomerahmuda.jpg" alt="Logo ALFA" class="logo">
+  <h1>ALFA</h1>
+  <p>Online Shopping</p>
+  <p>WELCOME TO BATAM</p>
+  </header>
+
+<div class="info-box">
+  <h3>Selamat Datang di ALFA Online Shopping</h3>
+  <p>Belanja online tanpa ribet dengan harga terbaik, <strong>scroll kebawah untuk mendapatkan Gratis Ongkir Sekota Batam!</strong></p>
+  <p style="margin-top: 12px;"><strong>Cara Order Gampang:</strong></p>
+  <p>1. Klik Foto untuk lihat Foto Lebih Besar</p>
+  <p>2. Klik "Pesan via WhatsApp" untuk Membeli</p>
+  <h3>Selamat Ber Belanja</h3>
+</div>
+
+<div class="container">
+
+    <!-- PRODUK 1 -->
+    <div class="product">
+     <div class="product-img-wrap">
+  <img src="alfa0002.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 1</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62084?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0001" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 2 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="alfa0001.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 2</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 3 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 3</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Polos%20Hitam" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 4 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 4</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Tudung" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+  
+  <!-- PRODUK 5 -->
+    <div class="product">
+     <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 5</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62084?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Pendek%20Logo%20ALFA0002" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 6 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Celana Panjang" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 6</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Panjang" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 7 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 7</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Polos%20Hitam" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 8 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 8</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/624?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Tudung" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+  
+  <!-- PRODUK 9 -->
+    <div class="product">
+     <div class="product-img-wrap">
+  <img src="celanapendek1.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 9</h3>
+      <p><strong>Harga: Rp23.000</strong></p>
+      <a href="https://wa.me/62854?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Pendek%20Logo%20ALFA0003" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 10 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="trainingmerah.jpg" alt="Celana Panjang" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 10</h3>
+      <p><strong>Harga: Rp35.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Panjang" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 11 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 11</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Polos%20Hitam" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 12 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 12</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Tudung" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+  
+  <!-- PRODUK 13 -->
+    <div class="product">
+     <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 13</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Pendek%20Logo%20ALFA0004" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 14 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Celana Panjang" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 14</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/628584?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Panjang" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 15 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 15</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Polos%20Hitam" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+
+    <!-- PRODUK 16 -->
+    <div class="product">
+      <div class="product-img-wrap">
+  <img src="logoijo.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>Produk 16</h3>
+      <p><strong>Harga: Rp00.000</strong></p>
+      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Tudung" 
+         target="_blank"
+         class="btn-wa">
+         🛒 Pesan via WhatsApp
+      </a>
+    </div>
+  
+    </div> <!-- PENUTUP .container -->
+  
+  <div class="product">
+      <div class="product-img-wrap">
+  <img src="qrcode.png" alt="ALFA QR" onclick="bukaLightbox(this.src)">
+      </div>
+      <h3>ALFA QR</h3>
+  </div>
+  
+  <div class="info-box">
+  <h3>Ketentuan Berlaku Di Setiap Belanja</h3>
+  <p>Apakah Anda mencari pakaian terbaru dan terhebat tanpa menguras kantong? 
+    Jangan mencari lebih jauh!
+    ALFA Online Shopping memiliki berbagai pilihan pakaian untuk semua orang, mulai dari Celana Panjang, Celana Pendek, Kaos Lengan Panjang, Kaos Lengan Pendek dengan berbagai macam ukuran untuk semua orang.
+ Dan sekarang untuk waktu yang terbatas, kami menawarkan pengiriman
+    <strong>Gratis Ongkir se-Kota Batam untuk pembelian di atas Rp 50.000</strong>
+    Anda bisa mendapatkan pakaian yang Anda sukai tanpa khawatir tentang biaya pengiriman.
+ Jadi tunggu apa lagi? Kunjungi toko online kami hari ini dan mulailah berbelanja!
+    Penawaran ini tidak akan bertahan selamanya, jadi jangan lewatkan.
+ Terima kasih</p>
+  </div>
+  
+  </div> <!-- PENUTUP .container -->
+  
+  <!-- JAVASCRIPT BUAT BUKA TUTUP MODAL -->
+  <script>
+    function bukaModal(id) {
+  // Tutup semua modal dulu
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.style.display = 'none';
+  });
+  
+  // Baru buka modal yang diklik
+  document.getElementById(id).style.display = 'flex';
+    }
+    function tutupModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    // Klik di luar modal buat nutup
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+    // Fungsi Lightbox Zoom Foto
+function bukaLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // Kunci scroll
+}
+function tutupLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+  document.body.style.overflow = 'auto'; // Buka scroll lagi
+    }
+  </script>
+
+</body>
+</html>
