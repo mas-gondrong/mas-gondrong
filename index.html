@@ -371,9 +371,10 @@
     <!-- PRODUK 2 -->
     <div class="product">
       <div class="product-img-wrap">
-  <img src="kakros.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+  <img src="kakros.jpg" alt="Celana Training" onclick="bukaLightbox(this.src)">
+        <button class="btn-info" onclick="bukaModal('modal2')">ℹ️</button>
       </div>
-      <h3>Produk 2</h3>
+      <h3>Velana Training</h3>
       <p><strong>Harga: Rp00.000</strong></p>
       <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro" 
          target="_blank"
@@ -443,11 +444,22 @@
     <!-- MODAL DESKRIPSI PRODUK 1 -->
   <div id="modal1" class="modal">
     <div class="modal-content">
-      <h4>Detail Celana Pendek 1</h4>
+      <h4>Detail: Kaos Lengan Pendek</h4>
       <p><strong>Bahan:</strong> Baby Terry Premium</p>
-      <p><strong>Ukuran:</strong> M 1</p>
-      <p><strong>Warna:</strong> Hitam</p>
-      <p><strong>Motif:</strong> Saku samping + Logo</p>
+      <p><strong>Ukuran:</strong> L</p>
+      <p><strong>Warna:</strong> Biru</p>
+      <p><strong>Motif:</strong> Logo</p>
+      <button class="close-btn" onclick="tutupModal('modal1')">TUTUP</button>
+    </div>
+    
+    <!-- MODAL DESKRIPSI PRODUK 2 -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <h4>Detail: Celana Training</h4>
+      <p><strong>Bahan:</strong> Baby Terry Premium</p>
+      <p><strong>Ukuran:</strong> XL</p>
+      <p><strong>Warna:</strong> Merah</p>
+      <p><strong>Motif:</strong> Garis Strip</p>
       <button class="close-btn" onclick="tutupModal('modal1')">TUTUP</button>
     </div>
   </div>
