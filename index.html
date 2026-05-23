@@ -346,7 +346,8 @@
   <p>Belanja online tanpa ribet dengan harga terbaik, <strong>scroll kebawah untuk mendapatkan Gratis Ongkir Sekota Batam!</strong></p>
   <p style="margin-top: 12px;"><strong>Cara Order Gampang:</strong></p>
   <p>1. Klik Foto untuk lihat Foto Lebih Besar</p>
-  <p>2. Klik "Pesan via WhatsApp" untuk Membeli</p>
+  <p>2. Klik Tombol ℹ️ untuk Melihat Detail Deskripsi</p>
+  <p>3. Klik "Pesan via WhatsApp" untuk Membeli</p>
   <h3>Selamat Ber Belanja</h3>
 </div>
 
@@ -387,6 +388,7 @@
     <div class="product">
       <div class="product-img-wrap">
   <img src="logoijo.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
+        <button class="btn-info" onclick="bukaModal('modal3')">ℹ️</button>
       </div>
       <h3>Produk 3</h3>
       <p><strong>Harga: Rp00.000</strong></p>
@@ -401,6 +403,7 @@
     <div class="product">
       <div class="product-img-wrap">
   <img src="logoijo.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
+        <button class="btn-info" onclick="bukaModal('modal4')">ℹ️</button>
       </div>
       <h3>Produk 4</h3>
       <p><strong>Harga: Rp00.000</strong></p>
@@ -415,6 +418,7 @@
     <div class="product">
      <div class="product-img-wrap">
   <img src="logoijo.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
+       <button class="btn-info" onclick="bukaModal('modal5')">ℹ️</button>
       </div>
       <h3>Produk 5</h3>
       <p><strong>Harga: Rp00.000</strong></p>
@@ -429,6 +433,7 @@
     <div class="product">
       <div class="product-img-wrap">
   <img src="logoijo.jpg" alt="Celana Panjang" onclick="bukaLightbox(this.src)">
+        <button class="btn-info" onclick="bukaModal('modal6')">ℹ️</button>
       </div>
       <h3>Produk 6</h3>
       <p><strong>Harga: Rp00.000</strong></p>
@@ -468,7 +473,158 @@
     </button>
   </div>
 </div>
+
+  <!-- MODAL DESKRIPSI PRODUK 2 - VERSI LENGKAP -->
+<div id="modal2" class="modal">
+  <div class="modal-content">
+    
+    <!-- FOTO KECIL -->
+    <img src="kaosputih.jpg" alt="Kaos Lengan Pendek Putih" 
+         style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+    
+    <h4>Detail: Kaos Lengan Pendek Putih</h4>
+    <p><strong>Bahan:</strong> Cotton 24s, adem dan nggak panas</p>
+    <p><strong>Ukuran:</strong> M, L, XL, XXL</p>
+    <p><strong>Warna:</strong> Biru Navy</p>
+    <p><strong>Harga:</strong> Rp75.000</p>
+    
+    <!-- TOMBOL WA -->
+    <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0002" 
+       target="_blank"
+       class="close-btn" 
+       style="background:#25D366; text-decoration:none; display:block; text-align:center; margin-top:15px;">
+       🛒 Pesan via WhatsApp
+    </a>
+    
+    <!-- TOMBOL TUTUP -->
+    <button class="close-btn" onclick="tutupModal('modal2')" 
+            style="background:#eee; color:#333; margin-top:8px;">
+      Tutup
+    </button>
+     </div>
+    </div>
+
+  <!-- MODAL DESKRIPSI PRODUK 3 - VERSI LENGKAP -->
+<div id="modal3" class="modal">
+  <div class="modal-content">
+    
+    <!-- FOTO KECIL -->
+    <img src="kaospoloshitam.jpg" alt="Kaos Lengan Pendek Hitam" 
+         style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+    
+    <h4>Detail: Kaos Lengan Pendek Hitam</h4>
+    <p><strong>Bahan:</strong> Cotton 24s, adem dan nggak panas</p>
+    <p><strong>Ukuran:</strong> M, L, XL, XXL</p>
+    <p><strong>Warna:</strong> Biru Navy</p>
+    <p><strong>Harga:</strong> Rp75.000</p>
+    
+    <!-- TOMBOL WA -->
+    <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0002" 
+       target="_blank"
+       class="close-btn" 
+       style="background:#25D366; text-decoration:none; display:block; text-align:center; margin-top:15px;">
+       🛒 Pesan via WhatsApp
+    </a>
+    
+    <!-- TOMBOL TUTUP -->
+    <button class="close-btn" onclick="tutupModal('modal3')" 
+            style="background:#eee; color:#333; margin-top:8px;">
+      Tutup
+    </button>
+  </div>
+ </div>
+
+  <!-- MODAL DESKRIPSI PRODUK 4 - VERSI LENGKAP -->
+<div id="modal4" class="modal">
+  <div class="modal-content">
+    
+    <!-- FOTO KECIL -->
+    <img src="kaostudung.jpg" alt="Kaos Lengan Panjang" 
+         style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+    
+    <h4>Detail: Kaos Lengan Panjang</h4>
+    <p><strong>Bahan:</strong> Cotton 24s, adem dan nggak panas</p>
+    <p><strong>Ukuran:</strong> M, L, XL, XXL</p>
+    <p><strong>Warna:</strong> Biru Navy</p>
+    <p><strong>Harga:</strong> Rp75.000</p>
+    
+    <!-- TOMBOL WA -->
+    <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0002" 
+       target="_blank"
+       class="close-btn" 
+       style="background:#25D366; text-decoration:none; display:block; text-align:center; margin-top:15px;">
+       🛒 Pesan via WhatsApp
+    </a>
+    
+    <!-- TOMBOL TUTUP -->
+    <button class="close-btn" onclick="tutupModal('modal4')" 
+            style="background:#eee; color:#333; margin-top:8px;">
+      Tutup
+    </button>
+  </div>
+</div>
+
+  <!-- MODAL DESKRIPSI PRODUK 5 - VERSI LENGKAP -->
+<div id="modal5" class="modal">
+  <div class="modal-content">
+    
+    <!-- FOTO KECIL -->
+    <img src="trainingmerah.jpg" alt="Celana training Hitam" 
+         style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+    
+    <h4>Detail: Celana Panjang Hitam</h4>
+    <p><strong>Bahan:</strong> Cotton 24s, adem dan nggak panas</p>
+    <p><strong>Ukuran:</strong> M, L, XL, XXL</p>
+    <p><strong>Warna:</strong> Biru Navy</p>
+    <p><strong>Harga:</strong> Rp75.000</p>
+    
+    <!-- TOMBOL WA -->
+    <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0002" 
+       target="_blank"
+       class="close-btn" 
+       style="background:#25D366; text-decoration:none; display:block; text-align:center; margin-top:15px;">
+       🛒 Pesan via WhatsApp
+    </a>
+    
+    <!-- TOMBOL TUTUP -->
+    <button class="close-btn" onclick="tutupModal('modal5')" 
+            style="background:#eee; color:#333; margin-top:8px;">
+      Tutup
+    </button>
+  </div>
+</div>
+
+  <!-- MODAL DESKRIPSI PRODUK 6 - VERSI LENGKAP -->
+<div id="modal6" class="modal">
+  <div class="modal-content">
+    
+    <!-- FOTO KECIL -->
+    <img src="celanamerah.jpg" alt="Training Merah" 
+         style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:12px;">
+    
+    <h4>Detail: Training Merah</h4>
+    <p><strong>Bahan:</strong> Cotton 24s, adem dan nggak panas</p>
+    <p><strong>Ukuran:</strong> M, L, XL, XXL</p>
+    <p><strong>Warna:</strong> Biru Navy</p>
+    <p><strong>Harga:</strong> Rp75.000</p>
+    
+    <!-- TOMBOL WA -->
+    <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Distro%20Kode%20ALFA0002" 
+       target="_blank"
+       class="close-btn" 
+       style="background:#25D366; text-decoration:none; display:block; text-align:center; margin-top:15px;">
+       🛒 Pesan via WhatsApp
+    </a>
+    
+    <!-- TOMBOL TUTUP -->
+    <button class="close-btn" onclick="tutupModal('modal6')" 
+            style="background:#eee; color:#333; margin-top:8px;">
+      Tutup
+    </button>
+  </div>
+</div>
   
+</div>
     </div> <!-- PENUTUP .container -->
   
   <div class="product">
