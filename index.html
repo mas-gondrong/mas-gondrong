@@ -7,6 +7,8 @@
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0052cc">
 
   <style>
     body {
@@ -244,5 +246,13 @@
     });
   </script>
 
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('PWA Siap diinstall!'))
+        .catch(err => console.log('Gagal daftar SW', err));
+    }
+    </script>
+  
 </body>
 </html>
