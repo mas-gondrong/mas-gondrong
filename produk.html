@@ -4,109 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Produk - Mas Gondrong</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0052cc">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 50px; }
     .back-btn { display: inline-block; margin: 15px; color: #1877f2; text-decoration: none; font-weight: 600; }
     .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-    /* === GALERI FOTO === */
+    /* GALERI FOTO */
     .gallery-container {
-      display: flex;
-      overflow-x: auto; /* Bisa di-swipe ke kanan/kiri */
-      scroll-snap-type: x mandatory; /* Bikin swipe berhenti pas di foto */
-      -webkit-overflow-scrolling: touch;
-      background: #f8f8f8;
-      height: 400px;
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; background: #f8f8f8; height: 400px;
     }
     .gallery-item {
-      flex: 0 0 100%;
-      scroll-snap-align: start;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
+      flex: 0 0 100%; scroll-snap-align: start; height: 100%;
+      display: flex; justify-content: center; align-items: center; position: relative;
     }
-    .gallery-item img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      cursor: zoom-in;
-    }
-    /* Tombol kiri kanan untuk PC */
-    .nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-size: 18px;
-      z-index: 10;
-      border-radius: 50%;
-      display: none; /* Sembunyikan di HP, pakai swipe jari */
-    }
-    @media (min-width: 768px) {
-      .nav-btn { display: block; }
-    }
-    .nav-prev { left: 10px; }
-    .nav-next { right: 10px; }
+    .gallery-item img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in; }
+    
+    /* Tombol Navigasi PC */
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 18px; z-index: 10; border-radius: 50%; display: none; }
+    @media (min-width: 768px) { .nav-btn { display: block; } }
+    .nav-prev { left: 10px; } .nav-next { right: 10px; }
 
-    /* Thumbnail kecil di bawah (opsional, tapi keren) */
-    .thumbnails {
-      display: flex;
-      gap: 8px;
-      padding: 10px;
-      overflow-x: auto;
-      background: #fff;
-    }
-    .thumb {
-      width: 50px;
-      height: 50px;
-      border-radius: 4px;
-      object-fit: cover;
-      border: 2px solid transparent;
-      cursor: pointer;
-    }
+    /* Thumbnail */
+    .thumbnails { display: flex; gap: 8px; padding: 10px; overflow-x: auto; background: #fff; }
+    .thumb { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; border: 2px solid transparent; cursor: pointer; }
     .thumb.active { border-color: #1877f2; }
 
-    /* === DETAIL PRODUK === */
+    /* DETAIL PRODUK */
     .product-details { padding: 20px; }
     .product-details h1 { margin: 0 0 10px 0; font-size: 24px; }
     .product-price { font-size: 20px; color: #1877f2; font-weight: 700; margin-bottom: 20px; }
     .product-desc { line-height: 1.6; font-size: 15px; color: #444; white-space: pre-wrap; background: #f9f9f9; padding: 15px; border-radius: 8px; }
-    .btn-wa-besar {
-      display: block; text-align: center; text-decoration: none;
-      background: #25D366; color: white; font-weight: bold;
-      padding: 15px; margin: 25px 20px 0; border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 16px;
-    }
+    .btn-wa-besar { display: block; text-align: center; text-decoration: none; background: #25D366; color: white; font-weight: bold; padding: 15px; margin: 25px 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 16px; }
 
-    /* === ZOOM LIGHTBOX (Fullscreen) === */
-    .lightbox {
-      display: none;
-      position: fixed; z-index: 9999;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      flex-direction: column;
-      justify-content: center; align-items: center;
-    }
-    .lightbox-img-container {
-      width: 100%; height: 80%;
-      overflow: auto; /* Bisa di-pinch/scroll buat zoom di HP */
-      display: flex; justify-content: center; align-items: center;
-    }
-    .lightbox-img-container img {
-      max-width: 200%; /* Zoom 2x */
-      width: 100%;
-      object-fit: contain;
-    }
-    .close-lightbox {
-      position: absolute; top: 20px; right: 20px;
-      color: white; font-size: 40px; cursor: pointer;
-    }
+    /* ZOOM LIGHTBOX */
+    .lightbox { display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; justify-content: center; align-items: center; }
+    .lightbox-img-container { width: 100%; height: 80%; overflow: auto; display: flex; justify-content: center; align-items: center; }
+    .lightbox-img-container img { max-width: 200%; width: 100%; object-fit: contain; }
+    .close-lightbox { position: absolute; top: 20px; right: 20px; color: white; font-size: 40px; cursor: pointer; }
     .loading { text-align: center; padding: 50px 20px; color: #65676b; }
   </style>
 
@@ -127,8 +64,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let currentImages = []; // Simpan list foto produk
-    let currentIndex = 0; // Posisi foto yang lagi diliat
+    let currentImages = []; 
+    let currentIndex = 0; 
 
     async function loadProduct() {
       const params = new URLSearchParams(window.location.search);
@@ -143,22 +80,19 @@
         const docRef = doc(db, "products", productId);
         const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
+        if (docSnap.exists()) {
           const p = docSnap.data();
           document.title = p.nama + " - Mas Gondrong";
           
-          // Cek apakah gambar 1 atau banyak (Anti-Bug)
+          // ANTI BUG: Cek apakah gambar 1 atau banyak
           let images = [];
           if (Array.isArray(p.gambar)) {
-            // Kalau di Firebase berbentuk Array
-            images = p.gambar;
+            images = p.gambar; // Kalau di Firebase Array
           } else if (typeof p.gambar === 'string') {
-            // Kalau di Firebase berbentuk String, pecah jadi Array pakai spasi
-            images = p.gambar.split(' ').filter(link => link.trim() !== '');
+            images = p.gambar.split(' ').filter(link => link.trim() !== ''); // Kalau String dipecah
           }
           currentImages = images;
 
-          // Buat HTML untuk Galeri Foto
           let galleryHTML = '';
           images.forEach((imgUrl, index) => {
             galleryHTML += `
@@ -168,7 +102,6 @@
             `;
           });
 
-          // Buat HTML Thumbnail Kecil
           let thumbsHTML = '';
           images.forEach((imgUrl, index) => {
             thumbsHTML += `<img src="${imgUrl}" class="thumb" onclick="gantiFoto(${index})" alt="Thumb ${index + 1}">`;
@@ -191,37 +124,34 @@
               <a href="${p.wa}" target="_blank" class="btn-wa-besar">💬 Pesan via WhatsApp</a>
             </div>
           `;
-                }
-        
         } else {
-          document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan.</p>';
+          document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan di database.</p>';
         }
       } catch (error) {
+        document.getElementById('product-container').innerHTML = '<p class="loading">Terjadi error saat memuat data.</p>';
         console.error("Error:", error);
       }
     }
 
-    // Fungsi Geser Galeri
+    // FUNGSI NAVIGASI
     window.scrollGallery = function(dir) {
       const gallery = document.getElementById('gallery');
       gallery.scrollBy({ left: dir * gallery.offsetWidth, behavior: 'smooth' });
     }
 
-    // Fungsi Ganti Foto dari Thumbnail
     window.gantiFoto = function(index) {
       const gallery = document.getElementById('gallery');
       gallery.scrollTo({ left: index * gallery.offsetWidth, behavior: 'smooth' });
     }
 
-    // Fungsi Buka Zoom Fullscreen
+    // FUNGSI LIGHTBOX (ZOOM)
     window.bukaLightbox = function(index) {
       currentIndex = index;
       document.getElementById('lightbox-img').src = currentImages[index];
       document.getElementById('lightbox').style.display = 'flex';
-      document.body.style.overflow = 'hidden'; // Kunci scroll
+      document.body.style.overflow = 'hidden';
     }
 
-    // Fungsi Geser Foto di Lightbox (Swipe)
     window.geserLightbox = function(dir) {
       currentIndex += dir;
       if (currentIndex < 0) currentIndex = currentImages.length - 1;
@@ -229,12 +159,12 @@
       document.getElementById('lightbox-img').src = currentImages[currentIndex];
     }
 
-    // Fungsi Tutup Lightbox
     window.tutupLightbox = function() {
       document.getElementById('lightbox').style.display = 'none';
-      document.body.style.overflow = 'auto'; // Buka scroll lagi
+      document.body.style.overflow = 'auto';
     }
 
+    // JALANKAN
     loadProduct();
   </script>
 </head>
@@ -246,18 +176,26 @@
     <div class="loading">Memuat detail produk...</div>
   </div>
 
-  <!-- LIGHTBOX UNTUK ZOOM FOTO -->
+  <!-- LIGHTBOX -->
   <div id="lightbox" class="lightbox" onclick="tutupLightbox()">
     <span class="close-lightbox">&times;</span>
     <div class="lightbox-img-container" onclick="event.stopPropagation()">
       <img id="lightbox-img" src="" alt="Zoom Foto">
     </div>
-    <!-- Tombol geser di zoom -->
     <div style="position: absolute; bottom: 30px; display: flex; gap: 20px;" onclick="event.stopPropagation()">
       <button onclick="geserLightbox(-1)" style="font-size: 24px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; cursor: pointer;">❮</button>
       <button onclick="geserLightbox(1)" style="font-size: 24px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; cursor: pointer;">❯</button>
     </div>
   </div>
+
+  <!-- SCRIPT PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('PWA Siap diinstall!'))
+        .catch(err => console.log('Gagal daftar SW', err));
+    }
+  </script>
 
 </body>
 </html>
