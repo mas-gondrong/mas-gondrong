@@ -9,322 +9,202 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 
   <style>
-    .hero {
-  position: relative;
-  background-image: url('jembatan1.jpg'); /* ganti nama file sesuai gambar kamu */
-  background-size: cover;
-  background-position: center;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-  padding: 20px;
-}
-
-/* Layer gelap biar tulisan kebaca */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 1;
-}
-
-/* Biar logo & teks ada di atas layer gelap */
-.hero .logo,
-.hero h1,
-.hero p {
-  position: relative;
-  z-index: 2;
-}
-
-.hero h1 {
-  font-size: 42px;
-  margin: 10px 0 5px;
-}
-
-.hero p {
-  font-size: 16px;
-  margin: 2px 0;
-}
-
-.hero .logo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 3px solid white;
-}
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      background-color: #f4f4f4;
+      background-color: #f0f2f5; /* Warna abu-abu khas FB */
+      color: #1c1e21;
     }
-    header {
-      background-color: #0052cc;
-      color: white;
-      padding: 20px 15px;
+
+    /* === HEADER HERO === */
+    .hero {
+      position: relative;
+      background-image: url('jembatan1.jpg');
+      background-size: cover;
+      background-position: center;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+      color: white;
+      padding: 20px;
     }
-    .logo {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 2px solid white;
-      margin-bottom: 10px;
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1;
     }
-    header h1 {
-      margin: 5px 0;
-      font-size: 24px;
+    .hero .logo, .hero h1, .hero p {
+      position: relative;
+      z-index: 2;
     }
-    header p {
-      margin: 0;
-      font-size: 14px;
+    .hero h1 { font-size: 42px; margin: 10px 0 5px; font-weight: 700; }
+    .hero p { font-size: 16px; margin: 2px 0; }
+    .hero .logo {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 3px solid white; object-fit: cover;
     }
-    
-    /* LAYOUT 2 KOLOM */
+
+    /* === INFO BOX === */
+    .info-box {
+      background: white;
+      margin: 15px auto;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 800px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      line-height: 1.6;
+    }
+    .info-box h3 { margin: 0 0 10px 0; color: #1877f2; font-size: 18px; }
+    .info-box p { margin: 5px 0; font-size: 14px; }
+
+    /* === GRID PRODUK KAYAK MARKETPLACE === */
     .container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      padding: 15px;
-      max-width: 600px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Otomatis 2-4 kolom */
+      gap: 12px;
+      padding: 0 15px 20px;
+      max-width: 800px;
       margin: 0 auto;
     }
-    
+
     .product {
-      background: silver;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      transition: box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
-    
-    /* WRAPPER BUAT TOMBOL INFO */
+    .product:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Bayangan saat dihover */
+    }
+
+    /* GAMBAR PRODUK */
     .product-img-wrap {
       position: relative;
-    }
-    
-    .product img {
       width: 100%;
-      height: 180px;
+      padding-top: 100%; /* Rasio kotak 1:1 kaya FB MP */
+      overflow: hidden;
+    }
+    .product-img-wrap img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       object-fit: cover;
-      border-radius: 8px;
+      cursor: zoom-in;
     }
-    
+
+    /* INFO DI BAWAH GAMBAR */
+    .product-info {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
     .product h3 {
-      margin: 10px 0 5px 0;
-      font-size: 16px;
+      margin: 0 0 4px 0;
+      font-size: 15px;
+      color: #1c1e21;
+      line-height: 1.3;
     }
-    
     .product p {
-      margin: 5px 0;
-      color: #333;
+      margin: 0 0 10px 0;
       font-size: 14px;
+      color: #65676b; /* Warna abu-abu FB */
     }
-    
-    .btn-wa {
-      display: inline-block;
-      background: #25D366;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 10px;
-      font-size: 14px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    
-    /* TOMBOL INFO DI POJOK GAMBAR */
+
+    /* TOMBOL INFO POJOK KANAN ATAS */
     .btn-info {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(0,0,0,0.6);
-      color: white;
+      top: 8px; right: 8px;
+      background: rgba(255,255,255,0.9);
+      color: #1c1e21;
       border: none;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       font-size: 14px;
       cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      z-index: 3;
     }
-    
-    /* JENDELA MODAL DESKRIPSI */
-    .modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  
-  justify-content: center;  /* <-- harus di dalam .modal */
-  align-items: center;      /* <-- harus di dalam .modal */
-} /* <-- kurung kurawal tutupnya pindah ke sini */
-    
+
+    /* TOMBOL WHATSAPP */
+    .btn-wa {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e7f3ff;
+      color: #1877f2;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-top: auto; /* Biar tombol selalu di bawah */
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .btn-wa:hover { background: #d1e7fd; }
+
+    /* === MODAL & LIGHTBOX === */
+    .modal, .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(255,255,255,0.9); /* FB MP terang */
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
     .modal-content {
       background-color: white;
       padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 320px;
-      text-align: left;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    
     .modal-content h4 {
       margin-top: 0;
-      color: #0052cc;
+      color: #1877f2;
       text-align: center;
+      font-size: 18px;
     }
-    
-    .modal-content p {
-      margin: 8px 0;
-      font-size: 14px;
-    }
-    
     .close-btn {
-      background: #0052cc;
-      color: white;
+      background: #e4e6eb;
+      color: #1c1e21;
       border: none;
       padding: 10px;
-      border-radius: 5px;
-      margin-top: 15px;
+      border-radius: 6px;
+      margin-top: 10px;
       width: 100%;
       cursor: pointer;
       font-size: 16px;
+      font-weight: 600;
     }
-    .info-box {
-  background: white;
-  margin: 15px;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  line-height: 1.5;
-}
-.info-box h3 {
-  margin: 0 0 8px 0;
-  color: #0052cc;
-  font-size: 16px;
-}
-.info-box p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #333;
-}
-    /* Lightbox / Zoom Foto */
-.lightbox {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.9);
-  justify-content: center;
-  align-items: center;
-}
+    
+    .lightbox img { max-width: 95%; max-height: 95%; object-fit: contain; }
+    .lightbox .close-lightbox {
+      position: absolute; top: 20px; right: 30px;
+      color: #1c1e21; font-size: 40px; cursor: pointer;
+    }
 
-.lightbox img {
-  max-width: 95%;
-  max-height: 95%;
-  object-fit: contain;
-}
-
-.lightbox .close-lightbox {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: white;
-  font-size: 40px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.product-img-wrap img {
-  cursor: zoom-in;
-}
-    /* === HEADER HERO === */
-.hero {
-  position: relative;
-  background-image: url('jembatan1.jpg'); /* ganti nama file sesuai gambar kamu */
-  background-size: cover;
-  background-position: center;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-  padding: 20px;
-}
-
-/* Layer gelap biar tulisan kebaca */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 1;
-}
-
-/* Biar logo & teks ada di atas layer gelap */
-.hero .logo,
-.hero h1,
-.hero p {
-  position: relative;
-  z-index: 2;
-}
-
-.hero h1 {
-  font-size: 42px;
-  margin: 10px 0 5px;
-  font-weight: 700;
-}
-
-.hero p {
-  font-size: 16px;
-  margin: 2px 0;
-}
-
-.hero .logo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 3px solid white;
-  object-fit: cover;
-}
-
-/* === RESPONSIF UNTUK HP KECIL === */
-@media (max-width: 480px) {
-  .hero {
-    height: 220px;
-    padding: 15px;
-  }
-
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .hero p {
-    font-size: 14px;
-  }
-
-  .hero .logo {
-    width: 65px;
-    height: 65px;
-  }
-}
-  </style>
+    /* === RESPONSIF HP === */
+    @media (max-width: 480px) {
+      .hero { height: 220px; }
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 14px; }
+      .hero .logo { width: 65px; height: 65px; }
+    }
+</style>
+ 
 </head>
   <!-- LIGHTBOX UNTUK ZOOM FOTO -->
 <div id="lightbox" class="lightbox" onclick="tutupLightbox()">
