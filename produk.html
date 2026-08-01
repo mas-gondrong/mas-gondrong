@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Produk - Mas Gondrong</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 50px; }
+    
+    /* Tombol Back */
+    .back-btn { 
+      display: inline-block; margin: 15px; 
+      color: #1877f2; text-decoration: none; font-weight: 600; 
+    }
+    
+    /* Layout Utama */
+    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    /* Foto Produk Gede */
+    .product-image { width: 100%; height: 400px; background: #eee; overflow: hidden; }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* Info Produk */
+    .product-details { padding: 20px; }
+    .product-details h1 { margin: 0 0 10px 0; font-size: 24px; }
+    .product-price { font-size: 20px; color: #1877f2; font-weight: 700; margin-bottom: 20px; }
+    .product-desc { line-height: 1.6; font-size: 15px; color: #444; white-space: pre-wrap; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+    
+    /* Tombol WA Gede */
+    .btn-wa-besar {
+      display: block; text-align: center; text-decoration: none;
+      background: #25D366; color: white; font-weight: bold;
+      padding: 15px; margin: 25px 20px 0; border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 16px;
+    }
+    .btn-wa-besar:hover { background: #1da851; }
+    
+    /* Loading State */
+    .loading { text-align: center; padding: 50px 20px; color: #65676b; }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // === PASTE KONFIGURASI FIREBASE KAMU DI SINI ===
+    const firebaseConfig = {
+  apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
+  authDomain: "mas-gondrong.firebaseapp.com",
+  projectId: "mas-gondrong",
+  storageBucket: "mas-gondrong.firebasestorage.app",
+  messagingSenderId: "191854522046",
+  appId: "1:191854522046:web:61bed6d89182392044b8ef"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Fungsi untuk ambil data produk berdasarkan ID di Link (URL)
+    async function loadProduct() {
+      // 1. Ambil ID dari link (?id=xxxx)
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('id');
+
+      if (!productId) {
+        document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan.</p>';
+        return;
+      }
+
+      try {
+        // 2. Ambil data dari Firebase berdasarkan ID
+        const docRef = doc(db, "products", productId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const p = docSnap.data();
+          
+          // 3. Tampilkan ke halaman HTML
+          document.title = p.nama + " - Mas Gondrong"; // Ganti judul tab browser
+          document.getElementById('product-container').innerHTML = `
+            <div class="product-image">
+              <img src="${p.gambar}" alt="${p.nama}">
+            </div>
+            <div class="product-details">
+              <h1>${p.nama}</h1>
+              <div class="product-price">${p.harga}</div>
+              <div class="product-desc">${p.desc || 'Tidak ada deskripsi.'}</div>
+              <a href="${p.wa}" target="_blank" class="btn-wa-besar">💬 Pesan via WhatsApp</a>
+            </div>
+          `;
+        } else {
+          document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan di database.</p>';
+        }
+      } catch (error) {
+        document.getElementById('product-container').innerHTML = '<p class="loading">Terjadi error saat memuat data.</p>';
+        console.error("Error:", error);
+      }
+    }
+
+    // Jalankan fungsi saat halaman dibuka
+    loadProduct();
+  </script>
+</head>
+<body>
+
+  <a href="index.html" class="back-btn">← Kembali ke Etalase</a>
+
+  <div class="container" id="product-container">
+    <div class="loading">Memuat detail produk...</div>
+  </div>
+
+</body>
+</html>
