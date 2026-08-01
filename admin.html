@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Mas Gondrong</title>
+  
+  <!-- Styling sederhana biar rapi -->
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+    .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #0052cc; }
+    input { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+    button { width: 100%; padding: 10px; background: #0052cc; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+    button:hover { background: #0040a0; }
+    .info { text-align: center; font-size: 14px; color: #666; margin-bottom: 20px; }
+  </style>
+
+  <!-- Script Firebase (Wajib) -->
+  <script type="module">
+    // 1. Import fungsi Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // 2. PASTE KONFIGURASI FIREBASE KAMU DI SINI (Ganti yang di dalam tanda petik)
+    const firebaseConfig = {
+      apiKey: "API_KEY_KAMU",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "PESAN_ID",
+      appId: "APP_ID"
+    };
+
+    // 3. Inisialisasi Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 4. Fungsi Login
+    window.loginAdmin = function() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          alert("Login Berhasil! Selamat datang Bos.");
+          window.location.reload(); // Refresh halaman setelah login
+        })
+        .catch((error) => {
+          alert("Login Gagal! Periksa email/password kamu.");
+          console.error("Error:", error);
+        });
+    }
+
+    // 5. Cek Status Login (Jika sudah login, tampilkan pesan)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('user-email').innerText = user.email;
+      } else {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
+      }
+    });
+
+    // 6. Fungsi Logout
+    window.logoutAdmin = function() {
+      signOut(auth).then(() => {
+        window.location.reload();
+      });
+    }
+  </script>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Admin Panel Mas Gondrong</h2>
+    
+    <!-- FORM LOGIN (Tampil jika belum login) -->
+    <div id="login-form">
+      <p class="info">Silakan login untuk mengelola produk.</p>
+      <input type="email" id="email" placeholder="Masukkan Email Admin" required>
+      <input type="password" id="password" placeholder="Masukkan Password" required>
+      <button onclick="loginAdmin()">Login Sekarang</button>
+    </div>
+
+    <!-- DASHBOARD (Tampil jika sudah login) -->
+    <div id="dashboard" style="display:none;">
+      <p class="info">Login sebagai: <strong id="user-email"></strong></p>
+      <h3>Selamat datang di Dashboard!</h3>
+      <p style="font-size:14px; color:#666;">Di tahap selanjutnya, form untuk tambah produk akan muncul di sini.</p>
+      <button onclick="logoutAdmin()" style="background: #e74c3c;">Logout</button>
+    </div>
+  </div>
+
+</body>
+</html>
