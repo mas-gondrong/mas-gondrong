@@ -222,18 +222,26 @@
     const produkContainer = document.getElementById('produk-container');
     const q = query(collection(db, "products"));
 
-        onSnapshot(q, (snapshot) => {
+            onSnapshot(q, (snapshot) => {
       produkContainer.innerHTML = ''; 
       snapshot.forEach((doc) => {
         const p = doc.data();
-        const id = doc.id; // Ambil ID unik produk dari Firebase
+        const id = doc.id;
         
-        // Kita bungkus foto dan teks dalam sebuah <a> (link) menuju produk.html?id=...
+        // INI KODE ANTI-BUGNYA: Ambil foto pertama dari kumpulan foto
+        let mainImage = '';
+        if (Array.isArray(p.gambar)) {
+          mainImage = p.gambar[0]; // Kalau Array, ambil index ke-0
+        } else if (typeof p.gambar === 'string') {
+          mainImage = p.gambar.split(' ')[0]; // Kalau String, ambil kata pertama sebelum spasi
+        }
+
+        // Tampilkan ke etalase (hanya pakai mainImage)
         produkContainer.innerHTML += `
           <div class="product">
             <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
               <div class="product-img-wrap">
-                <img src="${p.gambar}" alt="${p.nama}" style="cursor:pointer;">
+                <img src="${mainImage}" alt="${p.nama}" style="cursor:pointer;">
               </div>
               <div class="product-info">
                 <h3>${p.nama}</h3>
