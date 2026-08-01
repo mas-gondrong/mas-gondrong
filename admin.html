@@ -49,7 +49,8 @@
     window.logoutAdmin = function() { signOut(auth); }
 
     // FUNGSI TAMBAH PRODUK
-            window.tambahProduk = function() {
+       // FUNGSI TAMBAH PRODUK
+    window.tambahProduk = function() {
       const nama = document.getElementById('p-nama').value;
       const harga = document.getElementById('p-harga').value;
       const gambarRaw = document.getElementById('p-gambar').value;
@@ -67,22 +68,22 @@
       addDoc(collection(db, "products"), {
         nama: nama,
         harga: harga,
-        gambar: gambarArray, // <-- SIMPAN SEBAGAI ARRAY
+        gambar: gambarArray, // SIMPAN SEBAGAI ARRAY
         wa: wa,
         desc: desc,
         createdAt: new Date()
       }).then(() => {
         alert("Produk berhasil ditambahkan!");
-        // Kosongkan form...
-      })
-            }
-    
+        
+        // KODE UNTUK KOSONGKAN FORM WAJIB ADA DI DALAM SINI
         document.getElementById('p-nama').value = '';
         document.getElementById('p-harga').value = '';
         document.getElementById('p-gambar').value = '';
         document.getElementById('p-wa').value = '';
-        document.getElementById('p-desc').value = ''; // <-- KOSONGKAN FORM
-      })
+        document.getElementById('p-desc').value = '';
+      }).catch((error) => {
+        alert("Gagal menambah produk: " + error);
+      });
     }
 
     // FUNGSI HAPUS PRODUK
