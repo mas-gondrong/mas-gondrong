@@ -147,14 +147,13 @@
           const p = docSnap.data();
           document.title = p.nama + " - Mas Gondrong";
           
-          // Cek apakah gambar 1 atau banyak
+          // Cek apakah gambar 1 atau banyak (Anti-Bug)
           let images = [];
           if (Array.isArray(p.gambar)) {
-            images = p.gambar; // Kalau di Firebase array
-          } else if (typeof p.gambar === 'string' && p.gambar.includes('http')) {
-            images = [p.gambar]; // Kalau di Firebase string 1 link
+            // Kalau di Firebase berbentuk Array
+            images = p.gambar;
           } else if (typeof p.gambar === 'string') {
-            // Kalau string dipisah spasi (cadangan)
+            // Kalau di Firebase berbentuk String, pecah jadi Array pakai spasi
             images = p.gambar.split(' ').filter(link => link.trim() !== '');
           }
           currentImages = images;
