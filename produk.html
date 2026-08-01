@@ -5,37 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Produk - Mas Gondrong</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 50px; }
-    
-    /* Tombol Back */
-    .back-btn { 
-      display: inline-block; margin: 15px; 
-      color: #1877f2; text-decoration: none; font-weight: 600; 
-    }
-    
-    /* Layout Utama */
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; padding-bottom: 50px; }
+    .back-btn { display: inline-block; margin: 15px; color: #1877f2; text-decoration: none; font-weight: 600; }
     .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    
-    /* Foto Produk Gede */
-    .product-image { width: 100%; height: 400px; background: #eee; overflow: hidden; }
-    .product-image img { width: 100%; height: 100%; object-fit: cover; }
-    
-    /* Info Produk */
+
+    /* === GALERI FOTO === */
+    .gallery-container {
+      display: flex;
+      overflow-x: auto; /* Bisa di-swipe ke kanan/kiri */
+      scroll-snap-type: x mandatory; /* Bikin swipe berhenti pas di foto */
+      -webkit-overflow-scrolling: touch;
+      background: #f8f8f8;
+      height: 400px;
+    }
+    .gallery-item {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .gallery-item img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+    /* Tombol kiri kanan untuk PC */
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 18px;
+      z-index: 10;
+      border-radius: 50%;
+      display: none; /* Sembunyikan di HP, pakai swipe jari */
+    }
+    @media (min-width: 768px) {
+      .nav-btn { display: block; }
+    }
+    .nav-prev { left: 10px; }
+    .nav-next { right: 10px; }
+
+    /* Thumbnail kecil di bawah (opsional, tapi keren) */
+    .thumbnails {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      overflow-x: auto;
+      background: #fff;
+    }
+    .thumb {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+    .thumb.active { border-color: #1877f2; }
+
+    /* === DETAIL PRODUK === */
     .product-details { padding: 20px; }
     .product-details h1 { margin: 0 0 10px 0; font-size: 24px; }
     .product-price { font-size: 20px; color: #1877f2; font-weight: 700; margin-bottom: 20px; }
     .product-desc { line-height: 1.6; font-size: 15px; color: #444; white-space: pre-wrap; background: #f9f9f9; padding: 15px; border-radius: 8px; }
-    
-    /* Tombol WA Gede */
     .btn-wa-besar {
       display: block; text-align: center; text-decoration: none;
       background: #25D366; color: white; font-weight: bold;
       padding: 15px; margin: 25px 20px 0; border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 16px;
     }
-    .btn-wa-besar:hover { background: #1da851; }
-    
-    /* Loading State */
+
+    /* === ZOOM LIGHTBOX (Fullscreen) === */
+    .lightbox {
+      display: none;
+      position: fixed; z-index: 9999;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      flex-direction: column;
+      justify-content: center; align-items: center;
+    }
+    .lightbox-img-container {
+      width: 100%; height: 80%;
+      overflow: auto; /* Bisa di-pinch/scroll buat zoom di HP */
+      display: flex; justify-content: center; align-items: center;
+    }
+    .lightbox-img-container img {
+      max-width: 200%; /* Zoom 2x */
+      width: 100%;
+      object-fit: contain;
+    }
+    .close-lightbox {
+      position: absolute; top: 20px; right: 20px;
+      color: white; font-size: 40px; cursor: pointer;
+    }
     .loading { text-align: center; padding: 50px 20px; color: #65676b; }
   </style>
 
@@ -56,9 +127,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Fungsi untuk ambil data produk berdasarkan ID di Link (URL)
+    let currentImages = []; // Simpan list foto produk
+    let currentIndex = 0; // Posisi foto yang lagi diliat
+
     async function loadProduct() {
-      // 1. Ambil ID dari link (?id=xxxx)
       const params = new URLSearchParams(window.location.search);
       const productId = params.get('id');
 
@@ -68,19 +140,48 @@
       }
 
       try {
-        // 2. Ambil data dari Firebase berdasarkan ID
         const docRef = doc(db, "products", productId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const p = docSnap.data();
+          document.title = p.nama + " - Mas Gondrong";
           
-          // 3. Tampilkan ke halaman HTML
-          document.title = p.nama + " - Mas Gondrong"; // Ganti judul tab browser
+          // Cek apakah gambar 1 atau banyak
+          let images = [];
+          if (Array.isArray(p.gambar)) {
+            images = p.gambar;
+          } else if (typeof p.gambar === 'string' && p.gambar.includes('http')) {
+            images = [p.gambar]; // Kalau cuma 1 link string
+          }
+          currentImages = images;
+
+          // Buat HTML untuk Galeri Foto
+          let galleryHTML = '';
+          images.forEach((imgUrl, index) => {
+            galleryHTML += `
+              <div class="gallery-item">
+                <img src="${imgUrl}" alt="Foto ${index + 1}" onclick="bukaLightbox(${index})">
+              </div>
+            `;
+          });
+
+          // Buat HTML Thumbnail Kecil
+          let thumbsHTML = '';
+          images.forEach((imgUrl, index) => {
+            thumbsHTML += `<img src="${imgUrl}" class="thumb" onclick="gantiFoto(${index})" alt="Thumb ${index + 1}">`;
+          });
+
           document.getElementById('product-container').innerHTML = `
-            <div class="product-image">
-              <img src="${p.gambar}" alt="${p.nama}">
+            <div style="position: relative;">
+              <div class="gallery-container" id="gallery">
+                ${galleryHTML}
+              </div>
+              <button class="nav-btn nav-prev" onclick="scrollGallery(-1)">❮</button>
+              <button class="nav-btn nav-next" onclick="scrollGallery(1)">❯</button>
             </div>
+            <div class="thumbnails">${thumbsHTML}</div>
+            
             <div class="product-details">
               <h1>${p.nama}</h1>
               <div class="product-price">${p.harga}</div>
@@ -89,15 +190,47 @@
             </div>
           `;
         } else {
-          document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan di database.</p>';
+          document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan.</p>';
         }
       } catch (error) {
-        document.getElementById('product-container').innerHTML = '<p class="loading">Terjadi error saat memuat data.</p>';
         console.error("Error:", error);
       }
     }
 
-    // Jalankan fungsi saat halaman dibuka
+    // Fungsi Geser Galeri
+    window.scrollGallery = function(dir) {
+      const gallery = document.getElementById('gallery');
+      gallery.scrollBy({ left: dir * gallery.offsetWidth, behavior: 'smooth' });
+    }
+
+    // Fungsi Ganti Foto dari Thumbnail
+    window.gantiFoto = function(index) {
+      const gallery = document.getElementById('gallery');
+      gallery.scrollTo({ left: index * gallery.offsetWidth, behavior: 'smooth' });
+    }
+
+    // Fungsi Buka Zoom Fullscreen
+    window.bukaLightbox = function(index) {
+      currentIndex = index;
+      document.getElementById('lightbox-img').src = currentImages[index];
+      document.getElementById('lightbox').style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // Kunci scroll
+    }
+
+    // Fungsi Geser Foto di Lightbox (Swipe)
+    window.geserLightbox = function(dir) {
+      currentIndex += dir;
+      if (currentIndex < 0) currentIndex = currentImages.length - 1;
+      if (currentIndex >= currentImages.length) currentIndex = 0;
+      document.getElementById('lightbox-img').src = currentImages[currentIndex];
+    }
+
+    // Fungsi Tutup Lightbox
+    window.tutupLightbox = function() {
+      document.getElementById('lightbox').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Buka scroll lagi
+    }
+
     loadProduct();
   </script>
 </head>
@@ -107,6 +240,19 @@
 
   <div class="container" id="product-container">
     <div class="loading">Memuat detail produk...</div>
+  </div>
+
+  <!-- LIGHTBOX UNTUK ZOOM FOTO -->
+  <div id="lightbox" class="lightbox" onclick="tutupLightbox()">
+    <span class="close-lightbox">&times;</span>
+    <div class="lightbox-img-container" onclick="event.stopPropagation()">
+      <img id="lightbox-img" src="" alt="Zoom Foto">
+    </div>
+    <!-- Tombol geser di zoom -->
+    <div style="position: absolute; bottom: 30px; display: flex; gap: 20px;" onclick="event.stopPropagation()">
+      <button onclick="geserLightbox(-1)" style="font-size: 24px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; cursor: pointer;">❮</button>
+      <button onclick="geserLightbox(1)" style="font-size: 24px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; cursor: pointer;">❯</button>
+    </div>
   </div>
 
 </body>
