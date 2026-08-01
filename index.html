@@ -131,43 +131,7 @@
       font-size: 14px;
       color: #65676b;
     }
-
-    /* TOMBOL INFO POJOK KANAN ATAS */
-    .btn-info {
-      position: absolute;
-      top: 8px; right: 8px;
-      background: rgba(255,255,255,0.9);
-      color: #1c1e21;
-      border: none;
-      border-radius: 50%;
-      width: 28px; height: 28px;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      z-index: 3;
-    }
-
-    /* TOMBOL WHATSAPP */
-    .btn-wa {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #e7f3ff;
-      color: #1877f2;
-      padding: 8px 12px;
-      text-decoration: none;
-      border-radius: 6px;
-      margin-top: auto;
-      font-size: 14px;
-      font-weight: 600;
-      transition: background 0.3s;
-      
-      /* TAMBAHKAN 2 BARIS INI BIAR TOMBOL GAK BOCOR */
-      box-sizing: border-box;
-      width: 100%;
-    }
-    .btn-wa:hover { background: #d1e7fd; }
-
+    
     /* === MODAL & LIGHTBOX === */
     .modal, .lightbox {
       display: none;
@@ -252,65 +216,7 @@
   <!-- Produk dari Firebase akan otomatis muncul di sini -->
 </div>
   
-    <!-- Bagian QR Code dikeluarkan dari container grid produk -->
-  <div style="max-width: 800px; margin: 0 auto 20px; padding: 0 15px; display: flex; justify-content: center;">
-    <div class="product" style="max-width: 200px; width: 100%;">
-      <div class="product-img-wrap">
-        <img src="masgondrongqrcode.jpg" alt="Mas Gondrong QR" onclick="bukaLightbox(this.src)">
-      </div>
-      <div class="product-info">
-        <h3 style="text-align: center;">Mas Gondrong QR</h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="info-box">
-    <h3>Ketentuan Berlaku Di Setiap Belanja</h3>
-    <p>Apakah Anda mencari pakaian terbaru dan terhebat tanpa menguras kantong? 
-      Jangan mencari lebih jauh!
-      Mas Gondrong Online Shopping memiliki berbagai pilihan pakaian untuk semua orang, mulai dari Celana Panjang, Celana Pendek, Kaos Lengan Panjang, Kaos Lengan Pendek dengan berbagai macam ukuran untuk semua orang.
-      Dan sekarang untuk waktu yang terbatas, kami menawarkan pengiriman
-      <strong>Gratis Ongkir se-Kota Batam untuk pembelian di atas Rp 50.000</strong>
-      Anda bisa mendapatkan pakaian yang Anda sukai tanpa khawatir tentang biaya pengiriman.
-      Jadi tunggu apa lagi? Kunjungi toko online kami hari ini dan mulailah berbelanja!
-      Penawaran ini tidak akan bertahan selamanya, jadi jangan lewatkan.
-      Terima kasih
-    </p>
-  </div>
-  
-  <!-- JAVASCRIPT BUAT BUKA TUTUP MODAL -->
-  <script>
-    function bukaModal(id) {
-  // Tutup semua modal dulu
-  document.querySelectorAll('.modal').forEach(modal => {
-    modal.style.display = 'none';
-  });
-  
-  // Baru buka modal yang diklik
-  document.getElementById(id).style.display = 'flex';
-    }
-    function tutupModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-    // Klik di luar modal buat nutup
-    window.onclick = function(event) {
-      if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
-      }
-    }
-    // Fungsi Lightbox Zoom Foto
-function bukaLightbox(src) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox').style.display = 'flex';
-  document.body.style.overflow = 'hidden'; // Kunci scroll
-}
-function tutupLightbox() {
-  document.getElementById('lightbox').style.display = 'none';
-  document.body.style.overflow = 'auto'; // Buka scroll lagi
-    }
-  </script>
-
-    <!-- SCRIPT FIREBASE (Baca Data Produk) -->
+  <!-- SCRIPT FIREBASE (Baca Data Produk) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -331,35 +237,29 @@ function tutupLightbox() {
     // Fungsi untuk menampilkan produk dari Firebase ke Halaman Web
     const produkContainer = document.getElementById('produk-container');
     const q = query(collection(db, "products"));
-    
-    onSnapshot(q, (snapshot) => {
-      produkContainer.innerHTML = ''; // Kosongkan dulu
+
+        onSnapshot(q, (snapshot) => {
+      produkContainer.innerHTML = ''; 
       snapshot.forEach((doc) => {
         const p = doc.data();
+        const id = doc.id; // Ambil ID unik produk dari Firebase
         
-        // Buat Kartu Produk otomatis
+        // Kita bungkus foto dan teks dalam sebuah <a> (link) menuju produk.html?id=...
         produkContainer.innerHTML += `
           <div class="product">
-            <div class="product-img-wrap">
-              <img src="${p.gambar}" alt="${p.nama}" onclick="bukaLightbox(this.src)">
-            </div>
-            <div class="product-info">
-              <h3>${p.nama}</h3>
-              <p><strong>Harga: ${p.harga}</strong></p>
-              <a href="${p.wa}" target="_blank" class="btn-wa">💬 Pesan via WhatsApp</a>
-            </div>
+            <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
+              <div class="product-img-wrap">
+                <img src="${p.gambar}" alt="${p.nama}" style="cursor:pointer;">
+              </div>
+              <div class="product-info">
+                <h3>${p.nama}</h3>
+                <p><strong>Harga: ${p.harga}</strong></p>
+              </div>
+            </a>
           </div>
         `;
       });
     });
-  </script>
-
-  <!-- JAVASCRIPT BUAT BUKA TUTUP MODAL (Kode lamamu) -->
-  <script>
-    function bukaModal(id) {
-      // ... (biarkan kode javascript lamamu tetap di sini)
-    }
-    // ... dst
   </script>
 
 </body>
