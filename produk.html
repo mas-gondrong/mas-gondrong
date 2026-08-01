@@ -143,16 +143,19 @@
         const docRef = doc(db, "products", productId);
         const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
+      if (docSnap.exists()) {
           const p = docSnap.data();
           document.title = p.nama + " - Mas Gondrong";
           
           // Cek apakah gambar 1 atau banyak
           let images = [];
           if (Array.isArray(p.gambar)) {
-            images = p.gambar;
+            images = p.gambar; // Kalau di Firebase array
           } else if (typeof p.gambar === 'string' && p.gambar.includes('http')) {
-            images = [p.gambar]; // Kalau cuma 1 link string
+            images = [p.gambar]; // Kalau di Firebase string 1 link
+          } else if (typeof p.gambar === 'string') {
+            // Kalau string dipisah spasi (cadangan)
+            images = p.gambar.split(' ').filter(link => link.trim() !== '');
           }
           currentImages = images;
 
@@ -189,6 +192,8 @@
               <a href="${p.wa}" target="_blank" class="btn-wa-besar">💬 Pesan via WhatsApp</a>
             </div>
           `;
+                }
+        
         } else {
           document.getElementById('product-container').innerHTML = '<p class="loading">Produk tidak ditemukan.</p>';
         }
