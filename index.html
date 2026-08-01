@@ -246,115 +246,10 @@
 
 <div class="container">
 
-    <!-- PRODUK 1 -->
-    <div class="product">
-     <div class="product-img-wrap">
-  <img src="ipin.jpg" alt="Ipin" onclick="bukaLightbox(this.src)">
-       <button class="btn-info" onclick="bukaModal('modal1')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Ipin</h3>
-      <h3>Kode 0001</h3>
-      <p><strong>Harga: Rp28.000</strong></p>
-      <a href="https://wa.me/628576585?text=Halo%20Mas%20Gondrong%20saya%20mau%20order%20Kaos%20Lengan%20Pendek%20Kode%200001" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-   </div>
-
-    <!-- PRODUK 2 -->
-    <div class="product">
-      <div class="product-img-wrap">
-  <img src="kakros.jpg" alt="Kak Ros" onclick="bukaLightbox(this.src)">
-        <button class="btn-info" onclick="bukaModal('modal2')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Kak Ros</h3>
-      <p><strong>Harga: Rp00.000</strong></p>
-      <a href="https://wa.me/628576585?text=Halo%20Mas%20Gondrong,%20saya%20mau%20order%20Kaos%20Distro" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-  </div>
-
-    <!-- PRODUK 3 -->
-    <div class="product">
-      <div class="product-img-wrap">
-  <img src="jarjit.jpg" alt="Kaos Distro" onclick="bukaLightbox(this.src)">
-        <button class="btn-info" onclick="bukaModal('modal3')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Produk 3</h3>
-      <p><strong>Harga: Rp00.000</strong></p>
-      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Polos%20Hitam" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-   </div>
-
-    <!-- PRODUK 4 -->
-    <div class="product">
-      <div class="product-img-wrap">
-  <img src="mail.jpg" alt="Kaos Tudung" onclick="bukaLightbox(this.src)">
-        <button class="btn-info" onclick="bukaModal('modal4')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Produk 4</h3>
-      <p><strong>Harga: Rp00.000</strong></p>
-      <a href="https://wa.me/62884?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Kaos%20Tudung" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-  </div>
+<div class="container" id="produk-container">
+  <!-- Produk dari Firebase akan otomatis muncul di sini -->
+</div>
   
-  <!-- PRODUK 5 -->
-    <div class="product">
-     <div class="product-img-wrap">
-  <img src="susanti.jpg" alt="Celana Pendek" onclick="bukaLightbox(this.src)">
-       <button class="btn-info" onclick="bukaModal('modal5')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Produk 5</h3>
-      <p><strong>Harga: Rp00.000</strong></p>
-      <a href="https://wa.me/62084?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Pendek%20Logo%20ALFA0002" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-  </div>
-
-    <!-- PRODUK 6 -->
-    <div class="product">
-      <div class="product-img-wrap">
-  <img src="fizi.jpg" alt="Celana Panjang" onclick="bukaLightbox(this.src)">
-        <button class="btn-info" onclick="bukaModal('modal6')">ℹ️</button>
-      </div>
-      <!-- TAMBAHKAN DIV INI -->
-      <div class="product-info">
-      <h3>Produk 6</h3>
-      <p><strong>Harga: Rp00.000</strong></p>
-      <a href="https://wa.me/6284?text=Halo%20ALFA%20Shop,%20saya%20mau%20order%20Celana%20Panjang" 
-         target="_blank"
-         class="btn-wa">
-         ☎️ Pesan via WhatsApp
-      </a>
-    </div>
-  </div>
-
     <!-- MODAL DESKRIPSI PRODUK 1 - VERSI LENGKAP -->
 <div id="modal1" class="modal">
   <div class="modal-content">
@@ -595,6 +490,58 @@ function tutupLightbox() {
   document.getElementById('lightbox').style.display = 'none';
   document.body.style.overflow = 'auto'; // Buka scroll lagi
     }
+  </script>
+
+    <!-- SCRIPT FIREBASE (Baca Data Produk) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // === PASTE KONFIGURASI FIREBASE KAMU DI SINI (Sama persis seperti di admin.html) ===
+    const firebaseConfig = {
+  apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
+  authDomain: "mas-gondrong.firebaseapp.com",
+  projectId: "mas-gondrong",
+  storageBucket: "mas-gondrong.firebasestorage.app",
+  messagingSenderId: "191854522046",
+  appId: "1:191854522046:web:61bed6d89182392044b8ef"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Fungsi untuk menampilkan produk dari Firebase ke Halaman Web
+    const produkContainer = document.getElementById('produk-container');
+    const q = query(collection(db, "products"));
+    
+    onSnapshot(q, (snapshot) => {
+      produkContainer.innerHTML = ''; // Kosongkan dulu
+      snapshot.forEach((doc) => {
+        const p = doc.data();
+        
+        // Buat Kartu Produk otomatis
+        produkContainer.innerHTML += `
+          <div class="product">
+            <div class="product-img-wrap">
+              <img src="${p.gambar}" alt="${p.nama}" onclick="bukaLightbox(this.src)">
+            </div>
+            <div class="product-info">
+              <h3>${p.nama}</h3>
+              <p><strong>Harga: ${p.harga}</strong></p>
+              <a href="${p.wa}" target="_blank" class="btn-wa">💬 Pesan via WhatsApp</a>
+            </div>
+          </div>
+        `;
+      });
+    });
+  </script>
+
+  <!-- JAVASCRIPT BUAT BUKA TUTUP MODAL (Kode lamamu) -->
+  <script>
+    function bukaModal(id) {
+      // ... (biarkan kode javascript lamamu tetap di sini)
+    }
+    // ... dst
   </script>
 
 </body>
