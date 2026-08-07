@@ -45,6 +45,31 @@
     .lightbox-img-container img { max-width: 200%; width: 100%; object-fit: contain; }
     .close-lightbox { position: absolute; top: 20px; right: 20px; color: white; font-size: 40px; cursor: pointer; }
     .loading { text-align: center; padding: 50px 20px; color: #65676b; }
+
+        /* FITUR PREMIUM */
+    .price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+    .product-price { font-size: 22px; color: #ee4d2d; font-weight: 700; margin: 0; }
+    .price-strike { font-size: 14px; color: #999; text-decoration: line-through; }
+    .price-discount { background: #fff0ef; color: #ee4d2d; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    
+    .product-meta { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #555; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
+    .rating-stars { color: #ffce3d; font-weight: bold; }
+    .meta-divider { width: 1px; height: 12px; background: #ddd; }
+    
+    .badge-cod { display: inline-block; background: #fff0ef; color: #ee4d2d; border: 1px solid #ee4d2d; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-bottom: 15px; }
+    
+    .stock-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-size: 14px; color: #555; }
+    .stock-row .stock-val { font-weight: bold; color: #333; }
+    
+    /* ULASAN PEMBELI */
+    .review-section { margin-top: 30px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
+    .review-section h2 { font-size: 16px; margin: 0 0 15px 0; color: #333; }
+    .review-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
+    .review-item .review-user { font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; }
+    .review-item .review-rating { color: #ffce3d; }
+    .review-form { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    .review-form input, .review-form textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
+    .review-form button { background: #0052cc; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: 600; }
   </style>
 
   <script type="module">
@@ -107,6 +132,22 @@
             thumbsHTML += `<img src="${imgUrl}" class="thumb" onclick="gantiFoto(${index})" alt="Thumb ${index + 1}">`;
           });
 
+                    let discountHTML = '';
+          if (p.hargaCoret) {
+            // Hitung diskon otomatis
+            let angkaHarga = parseInt(p.harga.replace(/[^0-9]/g, ''));
+            let angkaCoret = parseInt(p.hargaCoret.replace(/[^0-9]/g, ''));
+            if (angkaCoret > angkaHarga) {
+              let persen = Math.round(((angkaCoret - angkaHarga) / angkaCoret) * 100);
+              discountHTML = `<span class="price-discount">-${persen}%</span>`;
+            }
+          }
+
+          let codHTML = '';
+          if (p.cod === true) {
+            codHTML = `<div class="badge-cod">💵 COD (Bayar di Tempat)</div>`;
+          }
+
           document.getElementById('product-container').innerHTML = `
             <div style="position: relative;">
               <div class="gallery-container" id="gallery">
@@ -119,9 +160,47 @@
             
             <div class="product-details">
               <h1>${p.nama}</h1>
-              <div class="product-price">${p.harga}</div>
-              <div class="product-desc">${p.desc || 'Tidak ada deskripsi.'}</div>
+              
+              <div class="price-row">
+                <span class="product-price">${p.harga}</span>
+                ${discountHTML}
+                <span class="price-strike">${p.hargaCoret || ''}</span>
+              </div>
+              
+              <div class="product-meta">
+                <span class="rating-stars">⭐ ${p.rating || '5.0'}</span>
+                <span class="meta-divider"></span>
+                <span>${p.terjual || '0'} Terjual</span>
+              </div>
+              
+              ${codHTML}
+              
+              <div class="stock-row">
+                <span>Stok: <span class="stock-val">${p.stok || 'Banyak'}</span></span>
+              </div>
+              
               <a href="${p.wa}" target="_blank" class="btn-wa-besar">💬 Pesan via WhatsApp</a>
+              
+              <div class="product-desc">${p.desc || 'Tidak ada deskripsi.'}</div>
+              
+              <div class="review-section">
+                <h2>💬 Ulasan Pembeli</h2>
+                <div class="review-form">
+                  <input type="text" id="review-name" placeholder="Nama Anda">
+                  <select id="review-rating" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; box-sizing:border-box;">
+                    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                    <option value="4">⭐⭐⭐⭐ (4)</option>
+                    <option value="3">⭐⭐⭐ (3)</option>
+                    <option value="2">⭐⭐ (2)</option>
+                    <option value="1">⭐ (1)</option>
+                  </select>
+                  <textarea id="review-text" placeholder="Tulis ulasan Anda..." rows="3"></textarea>
+                  <button onclick="kirimUlasan('${productId}')">Kirim Ulasan</button>
+                </div>
+                <div id="review-list">
+                  <p style="font-size:14px; color:#999;">Belum ada ulasan.</p>
+                </div>
+              </div>
             </div>
           `;
         } else {
