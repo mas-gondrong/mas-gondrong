@@ -47,11 +47,16 @@
 
     // FUNGSI LOGOUT
     window.logoutAdmin = function() { signOut(auth); }
-
-       // FUNGSI TAMBAH PRODUK
-    window.tambahProduk = function() {
+    
+           // FUNGSI TAMBAH PRODUK 
+           window.tambahProduk = function() {
       const nama = document.getElementById('p-nama').value;
       const harga = document.getElementById('p-harga').value;
+      const hargaCoret = document.getElementById('p-hargaCoret').value;
+      const rating = document.getElementById('p-rating').value;
+      const terjual = document.getElementById('p-terjual').value;
+      const stok = document.getElementById('p-stok').value;
+      const cod = document.getElementById('p-cod').checked; // true/false
       const gambarRaw = document.getElementById('p-gambar').value;
       const wa = document.getElementById('p-wa').value;
       const desc = document.getElementById('p-desc').value;
@@ -61,29 +66,36 @@
         return;
       }
 
-      // UBAH STRING JADI ARRAY (Pisahkan berdasarkan spasi)
       const gambarArray = gambarRaw.split(' ').filter(link => link.trim() !== '');
 
       addDoc(collection(db, "products"), {
         nama: nama,
         harga: harga,
-        gambar: gambarArray, // SIMPAN SEBAGAI ARRAY
+        hargaCoret: hargaCoret,
+        rating: rating,
+        terjual: terjual,
+        stok: stok,
+        cod: cod,
+        gambar: gambarArray, 
         wa: wa,
         desc: desc,
         createdAt: new Date()
       }).then(() => {
         alert("Produk berhasil ditambahkan!");
-        
-        // KODE UNTUK KOSONGKAN FORM WAJIB ADA DI DALAM SINI
         document.getElementById('p-nama').value = '';
         document.getElementById('p-harga').value = '';
+        document.getElementById('p-hargaCoret').value = '';
+        document.getElementById('p-rating').value = '';
+        document.getElementById('p-terjual').value = '';
+        document.getElementById('p-stok').value = '';
+        document.getElementById('p-cod').checked = false;
         document.getElementById('p-gambar').value = '';
         document.getElementById('p-wa').value = '';
         document.getElementById('p-desc').value = '';
       }).catch((error) => {
         alert("Gagal menambah produk: " + error);
       });
-    }
+        }
 
     // FUNGSI HAPUS PRODUK
     window.hapusProduk = function(id) {
@@ -151,6 +163,17 @@
     <input type="text" id="p-wa" placeholder="Link WhatsApp (cth: https://wa.me/...)">
     <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
     <button onclick="tambahProduk()">+ Tambah Produk</button>
+    
+    <input type="text" id="p-harga" placeholder="Harga Normal (cth: Rp100.000)">
+    <!-- TAMBAHKAN INI: Fitur Premium -->
+    <input type="text" id="p-hargaCoret" placeholder="Harga Coret (opsional, cth: Rp150.000)">
+    <input type="text" id="p-rating" placeholder="Rating Bintang (cth: 4.9)">
+    <input type="text" id="p-terjual" placeholder="Jumlah Terjual (cth: 100)">
+    <input type="text" id="p-stok" placeholder="Jumlah Stok (cth: 50)">
+    <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
+      <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD (Bayar di Tempat)
+    </label>
+    <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
 
     <div class="product-list" id="product-list">
       <!-- Daftar produk akan muncul di sini -->
