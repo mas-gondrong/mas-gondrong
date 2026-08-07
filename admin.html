@@ -8,65 +8,42 @@
     body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
     .container { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
     h2 { text-align: center; color: #0052cc; }
-    input, textarea { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+    input, textarea, select { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
     button { padding: 10px; background: #0052cc; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 5px;}
     button:hover { background: #0040a0; }
     .info { text-align: center; font-size: 14px; color: #666; margin-bottom: 20px; }
-    .product-list { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-    .product-item { background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
-    .btn-delete { background: #e74c3c; width: auto; padding: 5px 10px; font-size: 12px; margin: 0;}
-    .btn-logout { background: #666; margin-top: 20px; }
-
-        /* CSS BUAT DAFTAR PRODUK ADMIN */
+    
+    /* CSS DAFTAR PRODUK ADMIN */
     .admin-product-list { margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-    .admin-product-item { 
-      display: flex; align-items: center; gap: 12px; 
-      background: #f9f9f9; padding: 10px; margin-bottom: 10px; 
-      border-radius: 5px; 
-    }
-    .admin-product-thumb { 
-      width: 50px; height: 50px; border-radius: 4px; 
-      object-fit: cover; background: #ddd; flex-shrink: 0; 
-    }
+    .admin-product-item { display: flex; align-items: center; gap: 12px; background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+    .admin-product-thumb { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; background: #ddd; flex-shrink: 0; }
     .admin-product-info { flex-grow: 1; }
     .admin-product-info strong { font-size: 14px; display: block; }
     .admin-product-info small { font-size: 12px; color: #666; word-break: break-all; }
     .admin-btn-action { display: flex; gap: 5px; }
-    .btn-edit { 
-      background: #ffc107; color: #000; border: none; 
-      padding: 6px 10px; border-radius: 5px; cursor: pointer; 
-      font-size: 12px; font-weight: bold; 
-    }
-    .btn-delete { 
-      background: #dc3545; color: white; border: none; 
-      padding: 6px 10px; border-radius: 5px; cursor: pointer; 
-      font-size: 12px; font-weight: bold; 
-    }
+    .btn-edit { background: #ffc107; color: #000; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; width: auto; margin:0;}
+    .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; width: auto; margin:0;}
     
-    /* FORM EDIT MUNCUL DI BAWAH */
-    #edit-form-container { 
-      display: none; 
-      background: #fff3cd; padding: 15px; 
-      border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba; 
-    }
-    #edit-form-container h3 { margin-top: 0; color: #856404; }
+    /* FORM EDIT */
+    #edit-form-container { display: none; background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ffeeba; }
+    #edit-form-container h3 { margin-top: 0; color: #856404; text-align: center; }
+    .btn-logout { background: #666; margin-top: 20px; }
   </style>
 
   <script type="module">
-    import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // === PASTE KONFIGURASI FIREBASE KAMU DI SINI ===
     const firebaseConfig = {
-  apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
-  authDomain: "mas-gondrong.firebaseapp.com",
-  projectId: "mas-gondrong",
-  storageBucket: "mas-gondrong.firebasestorage.app",
-  messagingSenderId: "191854522046",
-  appId: "1:191854522046:web:61bed6d89182392044b8ef"
-};
+      apiKey: "API_KEY_KAMU",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "PESAN_ID",
+      appId: "APP_ID"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -76,22 +53,21 @@
     window.loginAdmin = function() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      signInWithEmailAndPassword(auth, email, password)
-        .catch((error) => alert("Login Gagal! Periksa email/password."));
+      signInWithEmailAndPassword(auth, email, password).catch((error) => alert("Login Gagal! Periksa email/password."));
     }
 
     // FUNGSI LOGOUT
     window.logoutAdmin = function() { signOut(auth); }
-    
-           // FUNGSI TAMBAH PRODUK 
-           window.tambahProduk = function() {
+
+    // FUNGSI TAMBAH PRODUK
+    window.tambahProduk = function() {
       const nama = document.getElementById('p-nama').value;
       const harga = document.getElementById('p-harga').value;
       const hargaCoret = document.getElementById('p-hargaCoret').value;
       const rating = document.getElementById('p-rating').value;
       const terjual = document.getElementById('p-terjual').value;
       const stok = document.getElementById('p-stok').value;
-      const cod = document.getElementById('p-cod').checked; // true/false
+      const cod = document.getElementById('p-cod').checked;
       const gambarRaw = document.getElementById('p-gambar').value;
       const wa = document.getElementById('p-wa').value;
       const desc = document.getElementById('p-desc').value;
@@ -104,17 +80,8 @@
       const gambarArray = gambarRaw.split(' ').filter(link => link.trim() !== '');
 
       addDoc(collection(db, "products"), {
-        nama: nama,
-        harga: harga,
-        hargaCoret: hargaCoret,
-        rating: rating,
-        terjual: terjual,
-        stok: stok,
-        cod: cod,
-        gambar: gambarArray, 
-        wa: wa,
-        desc: desc,
-        createdAt: new Date()
+        nama: nama, harga: harga, hargaCoret: hargaCoret, rating: rating, terjual: terjual, stok: stok, cod: cod,
+        gambar: gambarArray, wa: wa, desc: desc, createdAt: new Date()
       }).then(() => {
         alert("Produk berhasil ditambahkan!");
         document.getElementById('p-nama').value = '';
@@ -127,16 +94,17 @@
         document.getElementById('p-gambar').value = '';
         document.getElementById('p-wa').value = '';
         document.getElementById('p-desc').value = '';
-      }).catch((error) => {
-        alert("Gagal menambah produk: " + error);
-      });
-        }
+      }).catch((error) => alert("Gagal: " + error));
+    }
 
-        // FUNGSI BUKA FORM EDIT
+    // FUNGSI HAPUS PRODUK
+    window.hapusProduk = function(id) {
+      if(confirm("Yakin mau hapus produk ini?")) { deleteDoc(doc(db, "products", id)); }
+    }
+
+    // FUNGSI BUKA FORM EDIT
     window.bukaFormEdit = async function(id) {
-      const docRef = doc(db, "products", id);
-      const docSnap = await getDoc(docRef); // Pastikan getDoc sudah di import di atas!
-      
+      const docSnap = await getDoc(doc(db, "products", id));
       if (docSnap.exists()) {
         const p = docSnap.data();
         document.getElementById('edit-id').value = id;
@@ -148,14 +116,8 @@
         document.getElementById('edit-stok').value = p.stok || '';
         document.getElementById('edit-cod').checked = p.cod || false;
         
-        // Gabungkan array gambar jadi string dipisah spasi
-        let gambarStr = '';
-        if (Array.isArray(p.gambar)) {
-          gambarStr = p.gambar.join(' ');
-        } else {
-          gambarStr = p.gambar || '';
-        }
-        document.getElementById('edit-gambar').value = gambarStr;
+        let gambarStr = Array.isArray(p.gambar) ? p.gambar.join(' ') : p.gambar;
+        document.getElementById('edit-gambar').value = gambarStr || '';
         document.getElementById('edit-wa').value = p.wa || '';
         document.getElementById('edit-desc').value = p.desc || '';
         
@@ -187,15 +149,11 @@
         await updateDoc(doc(db, "products", id), dataBaru);
         alert("Produk berhasil diupdate!");
         batalEdit();
-      } catch (error) {
-        alert("Gagal update: " + error);
-      }
+      } catch (error) { alert("Gagal update: " + error); }
     }
 
     // FUNGSI BATAL EDIT
-    window.batalEdit = function() {
-      document.getElementById('edit-form-container').style.display = 'none';
-          }
+    window.batalEdit = function() { document.getElementById('edit-form-container').style.display = 'none'; }
 
     // CEK STATUS LOGIN & TAMPILKAN PRODUK
     onAuthStateChanged(auth, (user) => {
@@ -204,27 +162,18 @@
         document.getElementById('dashboard').style.display = 'block';
         document.getElementById('user-email').innerText = user.email;
 
-        // TAMPILKAN DAFTAR PRODUK REAL-TIME
         const q = query(collection(db, "products"));
         onSnapshot(q, (snapshot) => {
           const listDiv = document.getElementById('product-list');
           listDiv.innerHTML = '<h3>Daftar Produk Saat Ini</h3>';
-          
           if(snapshot.empty) {
             listDiv.innerHTML += '<p>Belum ada produk.</p>';
           } else {
             snapshot.forEach((docSnap) => {
               const p = docSnap.data();
               const id = docSnap.id;
+              let thumb = Array.isArray(p.gambar) ? (p.gambar[0] || '') : (p.gambar.split(' ')[0] || '');
               
-              // Ambil foto pertama untuk thumbnail
-              let thumb = '';
-              if (Array.isArray(p.gambar)) {
-                thumb = p.gambar[0] || '';
-              } else if (typeof p.gambar === 'string') {
-                thumb = p.gambar.split(' ')[0] || '';
-              }
-
               listDiv.innerHTML += `
                 <div class="admin-product-item">
                   <img src="${thumb}" class="admin-product-thumb" alt="Thumb" onerror="this.src='https://via.placeholder.com/50'">
@@ -241,7 +190,6 @@
             });
           }
         });
-
       } else {
         document.getElementById('login-form').style.display = 'block';
         document.getElementById('dashboard').style.display = 'none';
@@ -259,64 +207,50 @@
     <button onclick="loginAdmin()">Login</button>
   </div>
 
-<!-- DASHBOARD ADMIN -->
-<div class="container" id="dashboard" style="display:none;">
-  <h2>Dashboard Admin</h2>
-  <p class="info">Login sebagai: <strong id="user-email"></strong></p>
-  
-  <h3>Tambah Produk Baru</h3>
-  
-  <!-- 1. INFO DASAR -->
-  <input type="text" id="p-nama" placeholder="Nama Produk (cth: Kaos Ipin)">
-  
-  <!-- 2. HARGA & STATISTIK -->
-  <input type="text" id="p-harga" placeholder="Harga Normal (cth: Rp100.000)">
-  <input type="text" id="p-hargaCoret" placeholder="Harga Coret (opsional, cth: Rp150.000)">
-  <input type="text" id="p-rating" placeholder="Rating Bintang (cth: 4.9)">
-  <input type="text" id="p-terjual" placeholder="Jumlah Terjual (cth: 100)">
-  <input type="text" id="p-stok" placeholder="Jumlah Stok (cth: 50)">
-  
-  <!-- 3. OPSI COD -->
-  <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
-    <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD (Bayar di Tempat)
-  </label>
-  
-  <!-- 4. MEDIA & KONTAK -->
-  <input type="text" id="p-gambar" placeholder="Link Foto (Pisahkan dengan SPASI jika lebih dari 1)">
-  <input type="text" id="p-wa" placeholder="Link WhatsApp (cth: https://wa.me/...)">
-  
-  <!-- 5. DESKRIPSI -->
-  <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
-  
-  <!-- TOMBOL SUBMIT -->
-  <button onclick="tambahProduk()">+ Tambah Produk</button>
+  <!-- DASHBOARD ADMIN -->
+  <div class="container" id="dashboard" style="display:none;">
+    <h2>Dashboard Admin</h2>
+    <p class="info">Login sebagai: <strong id="user-email"></strong></p>
+    
+    <h3>Tambah Produk Baru</h3>
+    <input type="text" id="p-nama" placeholder="Nama Produk (cth: Kaos Ipin)">
+    <input type="text" id="p-harga" placeholder="Harga Normal (Rp100.000)">
+    <input type="text" id="p-hargaCoret" placeholder="Harga Coret (Rp150.000)">
+    <input type="text" id="p-rating" placeholder="Rating (4.9)">
+    <input type="text" id="p-terjual" placeholder="Terjual (25)">
+    <input type="text" id="p-stok" placeholder="Stok (50)">
+    <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
+      <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD
+    </label>
+    <input type="text" id="p-gambar" placeholder="Link Foto (Pisah spasi)">
+    <input type="text" id="p-wa" placeholder="Link WhatsApp (https://wa.me/..)">
+    <textarea id="p-desc" placeholder="Deskripsi Produk" rows="4"></textarea>
+    <button onclick="tambahProduk()">+ Tambah Produk</button>
 
-      <div class="admin-product-list" id="product-list">
-      <!-- Daftar produk akan muncul di sini -->
-    </div>
+    <div class="admin-product-list" id="product-list"></div>
 
-    <!-- FORM EDIT PRODUK (Hidden by default) -->
+    <!-- FORM EDIT (Hidden) -->
     <div id="edit-form-container">
       <h3>✏️ Edit Produk</h3>
       <input type="hidden" id="edit-id">
       <input type="text" id="edit-nama" placeholder="Nama Produk">
-      <input type="text" id="edit-harga" placeholder="Harga (Rp100.000)">
-      <input type="text" id="edit-hargaCoret" placeholder="Harga Coret (Rp150.000)">
-      <input type="text" id="edit-rating" placeholder="Rating (4.9)">
-      <input type="text" id="edit-terjual" placeholder="Terjual (25)">
-      <input type="text" id="edit-stok" placeholder="Stok (50)">
+      <input type="text" id="edit-harga" placeholder="Harga">
+      <input type="text" id="edit-hargaCoret" placeholder="Harga Coret">
+      <input type="text" id="edit-rating" placeholder="Rating">
+      <input type="text" id="edit-terjual" placeholder="Terjual">
+      <input type="text" id="edit-stok" placeholder="Stok">
       <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
         <input type="checkbox" id="edit-cod" style="width:auto;"> Tersedia COD
       </label>
-      <input type="text" id="edit-gambar" placeholder="Link Foto (Pisah spasi)">
-      <input type="text" id="edit-wa" placeholder="Link WhatsApp">
-      <textarea id="edit-desc" placeholder="Deskripsi" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
+      <input type="text" id="edit-gambar" placeholder="Link Foto">
+      <input type="text" id="edit-wa" placeholder="Link WA">
+      <textarea id="edit-desc" placeholder="Deskripsi" rows="4"></textarea>
       <button onclick="simpanEdit()" style="background:#28a745; margin-bottom:8px;">💾 Simpan Perubahan</button>
       <button onclick="batalEdit()" style="background:#6c757d;">Batal</button>
     </div>
 
-  <button class="btn-logout" onclick="logoutAdmin()">Logout</button>
-</div>
+    <button class="btn-logout" onclick="logoutAdmin()">Logout</button>
+  </div>
 
 </body>
 </html>
