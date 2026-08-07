@@ -151,36 +151,44 @@
     <button onclick="loginAdmin()">Login</button>
   </div>
 
-  <!-- DASHBOARD ADMIN -->
-  <div class="container" id="dashboard" style="display:none;">
-    <h2>Dashboard Admin</h2>
-    <p class="info">Login sebagai: <strong id="user-email"></strong></p>
-    
-    <h3>Tambah Produk Baru</h3>
-    <input type="text" id="p-nama" placeholder="Nama Produk (cth: Ipin)">
-    <input type="text" id="p-harga" placeholder="Harga (cth: Rp28.000)">
-    <input type="text" id="p-gambar" placeholder="Link Foto (Pisahkan dengan SPASI jika lebih dari 1)">
-    <input type="text" id="p-wa" placeholder="Link WhatsApp (cth: https://wa.me/...)">
-    <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
-    <button onclick="tambahProduk()">+ Tambah Produk</button>
-    
-    <input type="text" id="p-harga" placeholder="Harga Normal (cth: Rp100.000)">
-    <!-- TAMBAHKAN INI: Fitur Premium -->
-    <input type="text" id="p-hargaCoret" placeholder="Harga Coret (opsional, cth: Rp150.000)">
-    <input type="text" id="p-rating" placeholder="Rating Bintang (cth: 4.9)">
-    <input type="text" id="p-terjual" placeholder="Jumlah Terjual (cth: 100)">
-    <input type="text" id="p-stok" placeholder="Jumlah Stok (cth: 50)">
-    <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
-      <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD (Bayar di Tempat)
-    </label>
-    <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
+<!-- DASHBOARD ADMIN -->
+<div class="container" id="dashboard" style="display:none;">
+  <h2>Dashboard Admin</h2>
+  <p class="info">Login sebagai: <strong id="user-email"></strong></p>
+  
+  <h3>Tambah Produk Baru</h3>
+  
+  <!-- 1. INFO DASAR -->
+  <input type="text" id="p-nama" placeholder="Nama Produk (cth: Kaos Ipin)">
+  
+  <!-- 2. HARGA & STATISTIK -->
+  <input type="text" id="p-harga" placeholder="Harga Normal (cth: Rp100.000)">
+  <input type="text" id="p-hargaCoret" placeholder="Harga Coret (opsional, cth: Rp150.000)">
+  <input type="text" id="p-rating" placeholder="Rating Bintang (cth: 4.9)">
+  <input type="text" id="p-terjual" placeholder="Jumlah Terjual (cth: 100)">
+  <input type="text" id="p-stok" placeholder="Jumlah Stok (cth: 50)">
+  
+  <!-- 3. OPSI COD -->
+  <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
+    <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD (Bayar di Tempat)
+  </label>
+  
+  <!-- 4. MEDIA & KONTAK -->
+  <input type="text" id="p-gambar" placeholder="Link Foto (Pisahkan dengan SPASI jika lebih dari 1)">
+  <input type="text" id="p-wa" placeholder="Link WhatsApp (cth: https://wa.me/...)">
+  
+  <!-- 5. DESKRIPSI -->
+  <textarea id="p-desc" placeholder="Deskripsi Produk (Bahan, Ukuran, Warna, dll)" rows="4" style="width:100%; padding:10px; margin:8px 0; box-sizing:border-box; border:1px solid #ccc; border-radius:5px;"></textarea>
+  
+  <!-- TOMBOL SUBMIT -->
+  <button onclick="tambahProduk()">+ Tambah Produk</button>
 
-    <div class="product-list" id="product-list">
-      <!-- Daftar produk akan muncul di sini -->
-    </div>
-
-    <button class="btn-logout" onclick="logoutAdmin()">Logout</button>
+  <div class="product-list" id="product-list">
+    <!-- Daftar produk akan muncul di sini -->
   </div>
+
+  <button class="btn-logout" onclick="logoutAdmin()">Logout</button>
+</div>
 
 </body>
 </html>
