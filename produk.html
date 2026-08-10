@@ -70,6 +70,17 @@
     .review-form { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
     .review-form input, .review-form textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
     .review-form button { background: #0052cc; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: 600; }
+    
+    /* TOMBOL WA STICKY (Nempel di bawah) */
+    .sticky-wa-btn {
+      position: fixed;
+      bottom: 0; left: 0; width: 100%;
+      background: #25D366; color: white;
+      text-align: center; padding: 15px 0;
+      font-weight: bold; font-size: 16px;
+      text-decoration: none; z-index: 999;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+      border: none;                                     }
   </style>
 
   <script type="module">
@@ -105,6 +116,11 @@
         const docRef = doc(db, "products", productId);
         const docSnap = await getDoc(docRef);
 
+          // GANTI DENGAN NOMOR WA BOS (Nomor asli, tanpa tanda + atau 0 di depan)
+          const nomorWA = "6285765850084"; 
+          const pesanWA = `Halo Mas Gondrong, saya mau order produk: ${p.nama}`;
+          const linkWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanWA)}`;
+
         if (docSnap.exists()) {
           const p = docSnap.data();
           document.title = p.nama + " - Mas Gondrong";
@@ -132,7 +148,7 @@
             thumbsHTML += `<img src="${imgUrl}" class="thumb" onclick="gantiFoto(${index})" alt="Thumb ${index + 1}">`;
           });
 
-                    let discountHTML = '';
+          let discountHTML = '';
           if (p.hargaCoret) {
             // Hitung diskon otomatis
             let angkaHarga = parseInt(p.harga.replace(/[^0-9]/g, ''));
@@ -148,7 +164,9 @@
             codHTML = `<div class="badge-cod">💵 COD (Bayar di Tempat)</div>`;
           }
 
-          document.getElementById('product-container').innerHTML = `
+          document.getElementById('product-container').innerHTML = '
+            document.getElementById('wa-sticky').href = linkWA;
+          
             <div style="position: relative;">
               <div class="gallery-container" id="gallery">
                 ${galleryHTML}
@@ -179,8 +197,7 @@
                 <span>Stok: <span class="stock-val">${p.stok || 'Banyak'}</span></span>
               </div>
               
-              <a href="${p.wa}" target="_blank" class="btn-wa-besar">💬 Pesan via WhatsApp</a>
-              
+              <h3 style="margin:15px 0 8px 0; font-size:16px; color:#333;">Deskripsi Produk</h3>
               <div class="product-desc">${p.desc || 'Tidak ada deskripsi.'}</div>
               
               <div class="review-section">
@@ -360,6 +377,9 @@
         .catch(err => console.log('Gagal daftar SW', err));
     }
   </script>
+  
+    <!-- TOMBOL WA STICKY -->
+  <a href="#" id="wa-sticky" target="_blank" class="sticky-wa-btn">💬 Pesan via WhatsApp</a>
 
 </body>
 </html>
