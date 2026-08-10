@@ -69,7 +69,6 @@
       const stok = document.getElementById('p-stok').value;
       const cod = document.getElementById('p-cod').checked;
       const gambarRaw = document.getElementById('p-gambar').value;
-      const wa = document.getElementById('p-wa').value;
       const desc = document.getElementById('p-desc').value;
 
       if(!nama || !harga || !gambarRaw || !wa) {
@@ -141,7 +140,6 @@
         stok: document.getElementById('edit-stok').value,
         cod: document.getElementById('edit-cod').checked,
         gambar: gambarArray,
-        wa: document.getElementById('edit-wa').value,
         desc: document.getElementById('edit-desc').value
       };
 
@@ -220,10 +218,9 @@
     <input type="text" id="p-terjual" placeholder="Terjual (25)">
     <input type="text" id="p-stok" placeholder="Stok (50)">
     <label style="display:flex; align-items:center; gap:8px; margin:8px 0; font-size:14px;">
-      <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD
+    <input type="checkbox" id="p-cod" style="width:auto;"> Tersedia COD
     </label>
     <input type="text" id="p-gambar" placeholder="Link Foto (Pisah spasi)">
-    <input type="text" id="p-wa" placeholder="Link WhatsApp (https://wa.me/..)">
     <textarea id="p-desc" placeholder="Deskripsi Produk" rows="4"></textarea>
     <button onclick="tambahProduk()">+ Tambah Produk</button>
 
@@ -243,7 +240,6 @@
         <input type="checkbox" id="edit-cod" style="width:auto;"> Tersedia COD
       </label>
       <input type="text" id="edit-gambar" placeholder="Link Foto">
-      <input type="text" id="edit-wa" placeholder="Link WA">
       <textarea id="edit-desc" placeholder="Deskripsi" rows="4"></textarea>
       <button onclick="simpanEdit()" style="background:#28a745; margin-bottom:8px;">💾 Simpan Perubahan</button>
       <button onclick="batalEdit()" style="background:#6c757d;">Batal</button>
