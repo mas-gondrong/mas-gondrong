@@ -201,37 +201,34 @@
   <!-- Produk dari Firebase akan otomatis muncul di sini -->
 </div>
   
-  <!-- SCRIPT FIREBASE (Baca Data Produk) -->
-  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-    // === PASTE KONFIGURASI FIREBASE KAMU DI SINI (Sama persis seperti di admin.html) ===
+    // === PASTE KONFIGURASI FIREBASE KAMU DI SINI ===
     const firebaseConfig = {
-  apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
-  authDomain: "mas-gondrong.firebaseapp.com",
-  projectId: "mas-gondrong",
-  storageBucket: "mas-gondrong.firebasestorage.app",
-  messagingSenderId: "191854522046",
-  appId: "1:191854522046:web:61bed6d89182392044b8ef"
-};
+      apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
+      authDomain: "mas-gondrong.firebaseapp.com",
+      projectId: "mas-gondrong",
+      storageBucket: "mas-gondrong.firebasestorage.app",
+      messagingSenderId: "191854522046",
+      appId: "1:191854522046:web:61bed6d89182392044b8ef"
+    };
 
     const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app); // MESIN BACA PRODUK
+    
+    // MESIN NOTIFIKASI
     const messaging = getMessaging(app);
+    const vapidKey = "PASTE_VAPID_KEY_DISINI"; // Paste VAPID Key di sini
 
-    // GANTI DENGAN VAPID KEY DARI FIREBASE BOS
-    const vapidKey = "BOX3hOccp6xEzMKiii-TRsrgTa3v4NC-tt3PEq0mZlqsD4yIoxHEJun29yoYenZw6iQDv13dYlPA4_O5dYhaLyo";
-
-    // Fungsi minta izin notifikasi
     function requestNotificationPermission() {
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
           console.log('Izin notifikasi diberikan!');
-          // Ambil Token HP Pembeli
           getToken(messaging, { vapidKey: vapidKey }).then((currentToken) => {
             if (currentToken) {
               console.log('Token HP:', currentToken);
-              // Nanti kita simpan token ini ke database
             }
           }).catch((err) => {
             console.log('Gagal ambil token', err);
@@ -241,6 +238,48 @@
         }
       });
     }
+
+    // Jalankan minta izin notifikasi
+    requestNotificationPermission();
+
+    // Dengerin notifikasi saat pembeli lagi buka web
+    onMessage(messaging, (payload) => {
+      console.log('Notifikasi masuk:', payload);
+      alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
+    });
+
+    // === FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE ===
+    const produkContainer = document.getElementById('produk-container');
+    const q = query(collection(db, "products"));
+    
+    onSnapshot(q, (snapshot) => {
+      produkContainer.innerHTML = ''; 
+      snapshot.forEach((doc) => {
+        const p = doc.data();
+        const id = doc.id;
+        
+        let mainImage = '';
+        if (Array.isArray(p.gambar)) {
+          mainImage = p.gambar[0];
+        } else if (typeof p.gambar === 'string') {
+          mainImage = p.gambar.split(' ')[0];
+        }
+
+        produkContainer.innerHTML += `
+          <div class="product">
+            <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
+              <div class="product-img-wrap">
+                <img src="${mainImage}" alt="${p.nama}" style="cursor:pointer;">
+              </div>
+              <div class="product-info">
+                <h3>${p.nama}</h3>
+                <p><strong>Harga: ${p.harga}</strong></p>
+              </div>
+            </a>
+          </div>
+        `;
+      });
+    });
 
     // Jalankan otomatis saat web dibuka
     requestNotificationPermission();
