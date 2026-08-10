@@ -204,7 +204,7 @@
   <!-- SCRIPT FIREBASE (Baca Data Produk) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
     // === PASTE KONFIGURASI FIREBASE KAMU DI SINI (Sama persis seperti di admin.html) ===
     const firebaseConfig = {
@@ -217,7 +217,39 @@
 };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const messaging = getMessaging(app);
+
+    // GANTI DENGAN VAPID KEY DARI FIREBASE BOS
+    const vapidKey = "BOX3hOccp6xEzMKiii-TRsrgTa3v4NC-tt3PEq0mZlqsD4yIoxHEJun29yoYenZw6iQDv13dYlPA4_O5dYhaLyo";
+
+    // Fungsi minta izin notifikasi
+    function requestNotificationPermission() {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Izin notifikasi diberikan!');
+          // Ambil Token HP Pembeli
+          getToken(messaging, { vapidKey: vapidKey }).then((currentToken) => {
+            if (currentToken) {
+              console.log('Token HP:', currentToken);
+              // Nanti kita simpan token ini ke database
+            }
+          }).catch((err) => {
+            console.log('Gagal ambil token', err);
+          });
+        } else {
+          console.log('Izin notifikasi ditolak.');
+        }
+      });
+    }
+
+    // Jalankan otomatis saat web dibuka
+    requestNotificationPermission();
+
+    // Dengerin notifikasi saat pembeli lagi buka web
+    onMessage(messaging, (payload) => {
+      console.log('Notifikasi masuk:', payload);
+      alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
+    });
 
     // Fungsi untuk menampilkan produk dari Firebase ke Halaman Web
     const produkContainer = document.getElementById('produk-container');
