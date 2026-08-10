@@ -47,6 +47,11 @@
     .review-section h2 { font-size: 16px; margin: 0 0 15px 0; color: #333; }
     .review-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
     .review-item .review-user { font-weight: bold; margin-bottom: 5px; display: flex; justify-content: space-between; }
+    /* TAMBAHKAN CSS INI BIAR IKON ORANG NONGOL OTOMATIS */
+    .review-item .review-user span:first-child::before {
+      content: "🙋 "; /* Ikon orang */
+      margin-right: 4px;
+    }
     .review-item .review-rating { color: #ffce3d; }
     .review-form { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
     .review-form input, .review-form textarea, .review-form select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
