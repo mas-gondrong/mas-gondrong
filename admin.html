@@ -193,6 +193,48 @@
         document.getElementById('dashboard').style.display = 'none';
       }
     });
+
+            // ===================================================
+        // KODE BACA SEMUA ULASAN BUAT ADMIN (NOTIFIKASI)
+        // ===================================================
+        const reviewListDiv = document.getElementById('admin-review-list');
+        const reviewBadge = document.getElementById('review-badge');
+        
+        // Kita gunakan query global untuk ambil semua ulasan dari semua produk
+        // (Catatan: Ini butuh izin khusus di Firebase Rules, kita set nanti)
+        const reviewsQuery = query(collectionGroup(db, "reviews"), orderBy("createdAt", "desc"));
+        
+        onSnapshot(reviewsQuery, (snapshot) => {
+          if (snapshot.empty) {
+            reviewListDiv.innerHTML = '<p style="font-size:14px; color:#999;">Belum ada ulasan baru.</p>';
+            reviewBadge.style.display = 'none';
+          } else {
+            reviewBadge.style.display = 'inline-block';
+            reviewBadge.innerText = snapshot.size; // Jumlah total ulasan
+            
+            reviewListDiv.innerHTML = '';
+            snapshot.forEach((docSnap) => {
+              const r = docSnap.data();
+              const productId = docSnap.ref.parent.parent.id; // Ambil ID Produknya
+              
+              // Bikin bintang
+              let stars = '';
+              for(let i=1; i<=5; i++) { stars += i <= r.rating ? '⭐' : '✩'; }
+              
+              // Tampilkan di daftar
+              reviewListDiv.innerHTML += `
+                <div class="admin-product-item" style="flex-direction:column; align-items:flex-start; gap:5px;">
+                  <div style="display:flex; justify-content:space-between; width:100%;">
+                    <strong>🙋 ${r.name}</strong>
+                    <span class="review-rating">${stars}</span>
+                  </div>
+                  <p style="margin:0; color:#555; font-size:13px; line-height:1.4;">"${r.text}"</p>
+                  <a href="produk.html?id=${productId}" target="_blank" style="font-size:12px; color:#1877f2; text-decoration:none;">Lihat Produk →</a>
+                </div>
+              `;
+            });
+          }
+        });
   </script>
 </head>
 <body>
@@ -223,8 +265,21 @@
     <input type="text" id="p-gambar" placeholder="Link Foto (Pisah spasi)">
     <textarea id="p-desc" placeholder="Deskripsi Produk" rows="4"></textarea>
     <button onclick="tambahProduk()">+ Tambah Produk</button>
+    
+        <!-- KOTAK ULASAN MASUK -->
+    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+      <h3 style="display:flex; align-items:center; gap:8px;">
+        💬 Ulasan Masuk 
+        <span id="review-badge" style="background:#dc3545; color:white; font-size:12px; padding:2px 8px; border-radius:50%; display:none;"></span>
+      </h3>
+      <div id="admin-review-list" style="max-height: 300px; overflow-y: auto;">
+        <p style="font-size:14px; color:#999;">Belum ada ulasan baru.</p>
+      </div>
+    </div>
 
-    <div class="admin-product-list" id="product-list"></div>
+    <div class="admin-product-list" id="product-list">
+      <!-- Daftar produk akan muncul di sini -->
+    </div>
 
     <!-- FORM EDIT (Hidden) -->
     <div id="edit-form-container">
