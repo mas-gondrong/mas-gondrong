@@ -201,12 +201,12 @@
   <!-- Produk dari Firebase akan otomatis muncul di sini -->
 </div>
 
-   <script type="module">
+    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-    // === PASTE KONFIGURASI FIREBASE KAMU DI SINI ===
+    // === KONFIGURASI FIREBASE ===
     const firebaseConfig = {
       apiKey: "AIzaSyCtzYShY70eQGLNUnoQCi91uy7aMuFsYsc",
       authDomain: "mas-gondrong.firebaseapp.com",
@@ -217,11 +217,14 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app); // MESIN BACA PRODUK
     
-    // MESIN NOTIFIKASI
+    // 1. MESIN BACA PRODUK
+    const db = getFirestore(app);
+    
+    // 2. MESIN NOTIFIKASI
     const messaging = getMessaging(app);
-    const vapidKey = "PASTE_VAPID_KEY_DISINI"; // Paste VAPID Key di sini
+    // GANTI DENGAN VAPID KEY ASLI DARI FIREBASE BOS (Yang tadi sudah dibuat)
+    const vapidKey = "PASTE_VAPID_KEY_DISINI"; 
 
     function requestNotificationPermission() {
       Notification.requestPermission().then((permission) => {
@@ -240,16 +243,16 @@
       });
     }
 
-    // Jalankan minta izin notifikasi
+    // Jalankan minta izin notifikasi (CUMA SEKALI)
     requestNotificationPermission();
 
-    // Dengerin notifikasi saat pembeli lagi buka web
+    // Dengerin notifikasi saat pembeli lagi buka web (CUMA SEKALI)
     onMessage(messaging, (payload) => {
       console.log('Notifikasi masuk:', payload);
       alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
     });
 
-    // === FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE ===
+    // 3. FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE (CUMA SEKALI)
     const produkContainer = document.getElementById('produk-container');
     const q = query(collection(db, "products"));
     
@@ -259,6 +262,7 @@
         const p = doc.data();
         const id = doc.id;
         
+        // Ambil foto pertama dari kumpulan foto
         let mainImage = '';
         if (Array.isArray(p.gambar)) {
           mainImage = p.gambar[0];
@@ -281,52 +285,8 @@
         `;
       });
     });
-
-    // Jalankan otomatis saat web dibuka
-    requestNotificationPermission();
-
-    // Dengerin notifikasi saat pembeli lagi buka web
-    onMessage(messaging, (payload) => {
-      console.log('Notifikasi masuk:', payload);
-      alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
-    });
-
-    // Fungsi untuk menampilkan produk dari Firebase ke Halaman Web
-    const produkContainer = document.getElementById('produk-container');
-    const q = query(collection(db, "products"));
-
-            onSnapshot(q, (snapshot) => {
-      produkContainer.innerHTML = ''; 
-      snapshot.forEach((doc) => {
-        const p = doc.data();
-        const id = doc.id;
-        
-        // INI KODE ANTI-BUGNYA: Ambil foto pertama dari kumpulan foto
-        let mainImage = '';
-        if (Array.isArray(p.gambar)) {
-          mainImage = p.gambar[0]; // Kalau Array, ambil index ke-0
-        } else if (typeof p.gambar === 'string') {
-          mainImage = p.gambar.split(' ')[0]; // Kalau String, ambil kata pertama sebelum spasi
-        }
-
-        // Tampilkan ke etalase (hanya pakai mainImage)
-        produkContainer.innerHTML += `
-          <div class="product">
-            <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
-              <div class="product-img-wrap">
-                <img src="${mainImage}" alt="${p.nama}" style="cursor:pointer;">
-              </div>
-              <div class="product-info">
-                <h3>${p.nama}</h3>
-                <p><strong>Harga: ${p.harga}</strong></p>
-              </div>
-            </a>
-          </div>
-        `;
-      });
-    });
   </script>
-
+   
     <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
