@@ -79,7 +79,7 @@
 
       addDoc(collection(db, "products"), {
         nama: nama, harga: harga, hargaCoret: hargaCoret, rating: rating, terjual: terjual, stok: stok, cod: cod,
-        gambar: gambarArray, wa: wa, desc: desc, createdAt: new Date()
+        gambar: gambarArray, desc: desc, createdAt: new Date()
       }).then(() => {
         alert("Produk berhasil ditambahkan!");
         document.getElementById('p-nama').value = '';
@@ -90,7 +90,6 @@
         document.getElementById('p-stok').value = '';
         document.getElementById('p-cod').checked = false;
         document.getElementById('p-gambar').value = '';
-        document.getElementById('p-wa').value = '';
         document.getElementById('p-desc').value = '';
       }).catch((error) => alert("Gagal: " + error));
     }
