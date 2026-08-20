@@ -203,7 +203,7 @@
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, query, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
     // === KONFIGURASI FIREBASE ===
@@ -221,10 +221,10 @@
     // 1. MESIN BACA PRODUK
     const db = getFirestore(app);
     
-    // 2. MESIN NOTIFIKASI
+        // 2. MESIN NOTIFIKASI
     const messaging = getMessaging(app);
-    // GANTI DENGAN VAPID KEY ASLI DARI FIREBASE BOS (Yang tadi sudah dibuat)
-    const vapidKey = "PASTE_VAPID_KEY_DISINI"; 
+    // GANTI DENGAN VAPID KEY ASLI DARI FIREBASE BOS
+    const vapidKey = "BOX3hOccp6xEzMKiii-TRsrgTa3v4NC-tt3PEq0mZlqsD4yIoxHEJun29yoYenZw6iQDv13dYlPA4_O5dYhaLyo"; 
 
     function requestNotificationPermission() {
       Notification.requestPermission().then((permission) => {
@@ -233,6 +233,17 @@
           getToken(messaging, { vapidKey: vapidKey }).then((currentToken) => {
             if (currentToken) {
               console.log('Token HP:', currentToken);
+              
+              // INI KODE WAJIB BUAT SIMPAN TOKEN KE FIREBASE!
+              addDoc(collection(db, "tokens"), {
+                token: currentToken,
+                createdAt: new Date()
+              }).then(() => {
+                console.log('Token berhasil disimpan ke database!');
+              }).catch((err) => {
+                console.log('Gagal simpan token:', err);
+              });
+
             }
           }).catch((err) => {
             console.log('Gagal ambil token', err);
@@ -251,7 +262,7 @@
       console.log('Notifikasi masuk:', payload);
       alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
     });
-
+      
     // 3. FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE (CUMA SEKALI)
     const produkContainer = document.getElementById('produk-container');
     const q = query(collection(db, "products"));
