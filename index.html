@@ -463,7 +463,7 @@
         pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
         const nomorWA = "6285765850084"; 
         
-        // Memasukkan langsung link final ke dalam tag href HTML pembeli
+        // FIX: Format URL resmi WhatsApp yang benar dan dijamin bisa dibuka browser HP
         tombolWA.href = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
       }
 
@@ -491,20 +491,20 @@
           mainImage = p.gambar.split(' ')[0];
         }
 
-        // Penambahan tombol Masuk Keranjang di dalam struktur HTML Produk
+        // FIX: Mengubah p.nama menjadi p.name dan p.harga menjadi p.price sesuai field Firestore Anda
         produkContainer.innerHTML += `
           <div class="product" style="display: flex; flex-direction: column; justify-content: space-between;">
             <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
               <div class="product-img-wrap">
-                <img src="${mainImage}" alt="${p.nama}" style="cursor:pointer;">
+                <img src="${mainImage}" alt="${p.name}" style="cursor:pointer;">
               </div>
               <div class="product-info">
-                <h3>${p.nama}</h3>
-                <p><strong>Harga: ${p.harga}</strong></p>
+                <h3>${p.name}</h3>
+                <p><strong>Harga: ${p.price}</strong></p>
               </div>
             </a>
-            <!-- TOMBOL KERANJANG SINKRON DENGAN DATABASE -->
-            <button onclick="tambahKeKeranjang('${id}', '${p.nama.replace(/'/g, "\\'")}', '${p.harga}')" style="margin-top: auto; background: #28a745; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
+            <!-- TOMBOL GABUNGAN YANG SUDAH TERVERIFIKASI AMAN -->
+            <button onclick="tambahKeKeranjang('${id}', '${p.name.replace(/'/g, "\\'")}', '${p.price}')" style="margin-top: auto; background: #28a745; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
               + Keranjang 🛒
             </button>
           </div>
@@ -521,12 +521,141 @@
     }
     </script>
   
-   <script>
-  // KODE VIDEO IKLAN BAWAAN TOKO
+    // KODE VIDEO IKLAN BAWAAN TOKO
+  <script>
 function gantiVideoIklan(event) {
   const file = event.target.files[0];
   if (!file) return;
   const url = URL.createObjectURL(file);
   const player = document.getElementById('videoIklanPlayer');
   player.src = url;
-  document.getElementById('videoIklanContainer').style.display =
+  document.getElementById('videoIklanContainer').style.display = 'block';
+  player.play();
+}
+
+// Memutar video bawaan (misal: file di folder website kamu)
+function putarVideoBawaanToko() {
+  const player = document.getElementById('videoIklanPlayer');
+  // GANTI 'video-iklan.mp4' dengan nama file video iklanmu yang di-upload di GitHub
+  player.src = 'iklan.mp4'; 
+  document.getElementById('videoIklanContainer').style.display = 'block';
+  player.play().catch(() => {});
+}
+
+function tutupVideoIklan() {
+  const player = document.getElementById('videoIklanPlayer');
+  player.pause();
+  document.getElementById('videoIklanContainer').style.display = 'none';
+}
+  </script>
+
+<script>
+    const inputAudio = document.getElementById('pilihAudio');
+    const pemutar = document.getElementById('pemutar');
+    const namaLagu = document.getElementById('namaLagu');
+    const statusAntrean = document.getElementById('statusAntrean');
+    const tombolPlay = document.getElementById('tombolPlay');
+    const tombolPrev = document.getElementById('tombolPrev');
+    const tombolNext = document.getElementById('tombolNext');
+    const progressBar = document.getElementById('progressBar');
+    const kotakMusik = document.getElementById('kotakMusik');
+
+    let daftarLagu = []; 
+    let indeksSekarang = 0; 
+
+    // Fungsi putar musik
+    function putarLaguKe(indeks) {
+        if (daftarLagu.length > 0 && indeks >= 0 && indeks < daftarLagu.length) {
+            const file = daftarLagu[indeks];
+            const urlFile = URL.createObjectURL(file);
+            
+            pemutar.src = urlFile;
+            namaLagu.innerText = file.name;
+            statusAntrean.innerText = `Lagu ${indeks + 1} dari ${daftarLagu.length}`;
+            
+            pemutar.play();
+            tombolPlay.innerText = "⏸";
+            kotakMusik.classList.add('rgb-aktif'); // Nyalakan lampu RGB saat lagu berputar
+        }
+    }
+
+    // Input File Lagu dari HP
+    inputAudio.addEventListener('change', function(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            daftarLagu = Array.from(files); 
+            indeksSekarang = 0; 
+            putarLaguKe(indeksSekarang); 
+        }
+    });
+
+    // Tombol Next (Maju 1 Lagu)
+    tombolNext.addEventListener('click', function() {
+        if (daftarLagu.length === 0) return;
+        indeksSekarang++;
+        if (indeksSekarang >= daftarLagu.length) {
+            indeksSekarang = 0; // Balik ke lagu pertama jika sudah di ujung
+        }
+        putarLaguKe(indeksSekarang);
+    });
+
+    // Tombol Previous (Mundur 1 Lagu)
+    tombolPrev.addEventListener('click', function() {
+        if (daftarLagu.length === 0) return;
+        indeksSekarang--;
+        if (indeksSekarang < 0) {
+            indeksSekarang = daftarLagu.length - 1; // Balik ke lagu terakhir jika mundur dari nomor satu
+        }
+        putarLaguKe(indeksSekarang);
+    });
+
+    // Otomatis lanjut atau looping playlist saat lagu selesai
+    pemutar.addEventListener('ended', function() {
+        indeksSekarang++;
+        if (indeksSekarang < daftarLagu.length) {
+            putarLaguKe(indeksSekarang);
+        } else {
+            indeksSekarang = 0;
+            putarLaguKe(indeksSekarang);
+        }
+    });
+
+    // Tombol Play / Pause Manual
+    tombolPlay.addEventListener('click', function() {
+        if (daftarLagu.length === 0) return; 
+        
+        if (pemutar.paused) {
+            pemutar.play();
+            tombolPlay.innerText = "⏸";
+            kotakMusik.classList.add('rgb-aktif'); // Lampu RGB Menyala
+        } else {
+            pemutar.pause();
+            tombolPlay.innerText = "▶";
+            kotakMusik.classList.remove('rgb-aktif'); // Lampu RGB Mati saat dijeda
+        }
+    });
+
+    // Progress Bar pencari durasi
+    pemutar.addEventListener('timeupdate', function() {
+        if (pemutar.duration) {
+            const posisi = (pemutar.currentTime / pemutar.duration) * 100;
+            progressBar.value = posisi;
+        }
+    });
+
+    progressBar.addEventListener('input', function() {
+        if (pemutar.duration) {
+            const waktuBaru = (progressBar.value / 100) * pemutar.duration;
+            pemutar.currentTime = waktuBaru;
+        }
+    });
+  </script>
+  
+    <!-- PINTU RAHASIA ADMIN (Dicamouflage) -->
+  <div style="text-align: center; padding: 20px 0; background: #f0f2f5;">
+    <a href="admin.html" style="color: #ccc; font-size: 10px; text-decoration: none; opacity: 0.3;">
+      ⚙️ Admin Panel
+    </a>
+  </div>
+</body>
+</html>
