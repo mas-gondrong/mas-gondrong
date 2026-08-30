@@ -422,18 +422,15 @@
   pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
 
   const nomorWA = "6285765850084"; 
-  
-  // Menggunakan nama variabel linkWA dan format penggabungan teks langsung
-  // Ini format paling aman agar garis miring (/) tidak hilang saat dibaca browser HP
   const linkWA = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
   
-  // Kosongkan keranjang setelah data dikirim
+  // Kosongkan keranjang belanja
   keranjang = [];
   simpanDanUpdateKeranjang();
   
-  // Buka linkWA sesuai format sukses di produk.html
-  window.open(linkWA, '_blank');
-    }
+  // SOLUSI: Menggunakan location.href agar tidak diblokir oleh browser HP (aman dari ad-blocker)
+  window.location.href = linkWA;
+  }
       
     function simpanDanUpdateKeranjang() {
       localStorage.setItem('keranjang_mas_gondrong', JSON.stringify(keranjang));
