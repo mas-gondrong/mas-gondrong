@@ -197,7 +197,7 @@
   <h3>Selamat-Ber-Belanja</h3>
 </div>
 
-  <!-- Tombol Terapung Keranjang Belanja -->
+<!-- Tombol Terapung Keranjang Belanja -->
 <button onclick="bukaTutupKeranjang()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 15px; background: #28a745; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
   🛒 <span id="total-item-keranjang" style="background: red; border-radius: 50%; padding: 2px 7px; font-size: 12px; margin-left: 5px;">0</span>
 </button>
@@ -212,7 +212,12 @@
   <hr>
   <h3>Total: Rp <span id="total-harga-keranjang">0</span></h3>
   <button onclick="bukaTutupKeranjang()" style="background: #6c757d; color: white; width: 100%; padding: 10px; margin-bottom: 10px; border: none; border-radius: 5px; cursor: pointer;">Lanjut Belanja</button>
-  <button onclick="checkoutWhatsApp()" style="background: #25d366; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Pesan via WhatsApp</button>
+  
+  <!-- PERBAIKAN UTAMA: Mengubah tombol menjadi Tag <a> murni standar internet -->
+  <a id="tombol-checkout-wa" href="#" target="_blank" style="display: block; text-align: center; text-decoration: none; background: #25d366; color: white; width: calc(100% - 20px); padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">Pesan via WhatsApp</a>
+  
+  <!-- Tombol tambahan untuk hapus keranjang jika user ingin membatalkan -->
+  <button onclick="resetKeranjangManual()" style="background: #dc3545; color: white; width: 100%; padding: 8px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">Kosongkan Keranjang</button>
 </div>
 
 <div class="container" id="produk-container">
@@ -403,67 +408,42 @@
 
       simpanDanUpdateKeranjang();
     }
-
-  window.checkoutWhatsApp = function() {
-  if (keranjang.length === 0) {
-    alert("Keranjang Anda masih kosong!");
-    return;
-  }
-
-  let pesan = `Halo Mas Gondrong, saya mau pesan:\n\n`;
-  let totalHarga = 0;
-
-  keranjang.forEach((item, index) => {
-    const subTotal = item.harga * item.jumlah;
-    totalHarga += subTotal;
-    pesan += `${index + 1}. *${item.nama}* (${item.jumlah}x) = Rp ${subTotal.toLocaleString('id-ID')}\n`;
-  });
-
-  pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
-
-  const nomorWA = "6285765850084"; 
-  const linkWA = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
   
-  // === TRIK PAMUNGKAS AMAN BROWSER HP ===
-  // Buat elemen tautan (link) sementara di memori browser
-  const linkToko = document.createElement('a');
-  linkToko.href = linkWA;
-  
-  // Buka langsung di tab yang sama (opsi paling aman dari blokir)
-  linkToko.target = "_self"; 
-  
-  // Masukkan elemen ke halaman, klik otomatis, lalu hapus lagi
-  document.body.appendChild(linkToko);
-  linkToko.click();
-  document.body.removeChild(linkToko);
+        window.resetKeranjangManual = function() {
+      if(confirm("Apakah Anda ingin mengosongkan seluruh keranjang belanja?")) {
+        keranjang = [];
+        simpanDanUpdateKeranjang();
+      }
+    }
 
-  // Kosongkan keranjang belanja HANYA setelah perintah klik di atas dieksekusi
-  setTimeout(() => {
-    keranjang = [];
-    simpanDanUpdateKeranjang();
-  }, 500); // Diberi jeda setengah detik agar browser sempat memproses perpindahan ke WA
-  }
-      
     function simpanDanUpdateKeranjang() {
       localStorage.setItem('keranjang_mas_gondrong', JSON.stringify(keranjang));
       
       const daftarItem = document.getElementById('daftar-item-keranjang');
       const totalItemBadge = document.getElementById('total-item-keranjang');
       const totalHargaLabel = document.getElementById('total-harga-keranjang');
+      const tombolWA = document.getElementById('tombol-checkout-wa');
       
-      if (!daftarItem || !totalItemBadge || !totalHargaLabel) return;
+      if (!daftarItem || !totalItemBadge || !totalHargaLabel || !tombolWA) return;
       
       daftarItem.innerHTML = '';
       let totalHarga = 0;
       let totalItem = 0;
+      let pesan = `Halo Mas Gondrong, saya mau pesan:\n\n`;
 
       if (keranjang.length === 0) {
         daftarItem.innerHTML = '<p style="color: gray; text-align:center;">Keranjang masih kosong.</p>';
+        tombolWA.href = "#";
+        tombolWA.onclick = function(e) { e.preventDefault(); alert("Keranjang masih kosong!"); };
       } else {
-        keranjang.forEach(item => {
+        // Aktifkan kembali fungsi link normal
+        tombolWA.onclick = null;
+        
+        keranjang.forEach((item, index) => {
           const subTotal = item.harga * item.jumlah;
           totalHarga += subTotal;
           totalItem += item.jumlah;
+          pesan += `${index + 1}. *${item.nama}* (${item.jumlah}x) = Rp ${subTotal.toLocaleString('id-ID')}\n`;
 
           daftarItem.innerHTML += `
             <div style="border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
@@ -479,11 +459,17 @@
             </div>
           `;
         });
+
+        pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
+        const nomorWA = "6285765850084"; 
+        
+        // Memasukkan langsung link final ke dalam tag href HTML pembeli
+        tombolWA.href = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
       }
 
       totalItemBadge.innerText = totalItem;
       totalHargaLabel.innerText = totalHarga.toLocaleString('id-ID');
-    }
+     }
 
     // Jalankan pemuatan keranjang pertama kali halaman dibuka
     simpanDanUpdateKeranjang();
