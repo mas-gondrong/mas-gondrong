@@ -404,31 +404,37 @@
       simpanDanUpdateKeranjang();
     }
 
-    window.checkoutWhatsApp = function() {
-      if (keranjang.length === 0) {
-        alert("Keranjang Anda masih kosong!");
-        return;
-      }
+  window.checkoutWhatsApp = function() {
+  if (keranjang.length === 0) {
+    alert("Keranjang Anda masih kosong!");
+    return;
+  }
 
-      let pesan = `Halo Mas Gondrong, saya mau pesan:\n\n`;
-      let totalHarga = 0;
+  let pesan = `Halo Mas Gondrong, saya mau pesan:\n\n`;
+  let totalHarga = 0;
 
-      keranjang.forEach((item, index) => {
-        const subTotal = item.harga * item.jumlah;
-        totalHarga += subTotal;
-        pesan += `${index + 1}. *${item.nama}* (${item.jumlah}x) = Rp ${subTotal.toLocaleString('id-ID')}\n`;
-      });
+  keranjang.forEach((item, index) => {
+    const subTotal = item.harga * item.jumlah;
+    totalHarga += subTotal;
+    pesan += `${index + 1}. *${item.nama}* (${item.jumlah}x) = Rp ${subTotal.toLocaleString('id-ID')}\n`;
+  });
 
-      pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
+  pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
 
-      // MASUKKAN NOMOR WHATSAPP TOKO MAS GONDRONG DISINI (Gunakan kode negara tanpa tanda '+')
-      const nomorWA = "6285765850084"; 
-      const urlWA = `https://wa.me{nomorWA}?text=${encodeURIComponent(pesan)}`;
-      
-      keranjang = [];
-      simpanDanUpdateKeranjang();
-      window.open(urlWA, '_blank');
-    }
+  // Tulis nomor HP Anda langsung di sini menggunakan angka saja (tanpa spasi, tanda strip, atau tanda +)
+  // Contoh jika nomor Anda 0812-3456-7890, maka ubah menjadi 6281234567890
+  const nomorWA = "6285765850084"; 
+  
+  // Perbaikan format URL: Menggunakan tanda tambah (+) string yang benar
+  const urlWA = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(pesan);
+  
+  // Kosongkan keranjang setelah berhasil checkout
+  keranjang = [];
+  simpanDanUpdateKeranjang();
+  
+  // Buka aplikasi WhatsApp
+  window.open(urlWA, '_blank');
+}
 
     function simpanDanUpdateKeranjang() {
       localStorage.setItem('keranjang_mas_gondrong', JSON.stringify(keranjang));
