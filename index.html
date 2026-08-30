@@ -425,9 +425,9 @@
   // Contoh jika nomor Anda 0812-3456-7890, maka ubah menjadi 6281234567890
   const nomorWA = "6285765850084"; 
   
-  // Perbaikan format URL: Menggunakan tanda tambah (+) string yang benar
-  const urlWA = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(pesan);
-  
+  // OPSI 2: Menggunakan format backtick (Garis miring berada di luar tanda dollar)
+  const urlWA = `https://wa.me{nomorWA}?text=${encodeURIComponent(pesan)}`;
+
   // Kosongkan keranjang setelah berhasil checkout
   keranjang = [];
   simpanDanUpdateKeranjang();
