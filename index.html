@@ -421,21 +421,20 @@
 
   pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
 
-  // Tulis nomor HP Anda langsung di sini menggunakan angka saja (tanpa spasi, tanda strip, atau tanda +)
-  // Contoh jika nomor Anda 0812-3456-7890, maka ubah menjadi 6281234567890
   const nomorWA = "6285765850084"; 
   
-  // OPSI 2: Menggunakan format backtick (Garis miring berada di luar tanda dollar)
-  const urlWA = `https://wa.me{nomorWA}?text=${encodeURIComponent(pesan)}`;
-
-  // Kosongkan keranjang setelah berhasil checkout
+  // Menggunakan nama variabel linkWA dan format penggabungan teks langsung
+  // Ini format paling aman agar garis miring (/) tidak hilang saat dibaca browser HP
+  const linkWA = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
+  
+  // Kosongkan keranjang setelah data dikirim
   keranjang = [];
   simpanDanUpdateKeranjang();
   
-  // Buka aplikasi WhatsApp
-  window.open(urlWA, '_blank');
-}
-
+  // Buka linkWA sesuai format sukses di produk.html
+  window.open(linkWA, '_blank');
+    }
+      
     function simpanDanUpdateKeranjang() {
       localStorage.setItem('keranjang_mas_gondrong', JSON.stringify(keranjang));
       
