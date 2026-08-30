@@ -424,12 +424,24 @@
   const nomorWA = "6285765850084"; 
   const linkWA = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(pesan);
   
-  // Kosongkan keranjang belanja
-  keranjang = [];
-  simpanDanUpdateKeranjang();
+  // === TRIK PAMUNGKAS AMAN BROWSER HP ===
+  // Buat elemen tautan (link) sementara di memori browser
+  const linkToko = document.createElement('a');
+  linkToko.href = linkWA;
   
-  // SOLUSI: Menggunakan location.href agar tidak diblokir oleh browser HP (aman dari ad-blocker)
-  window.location.href = linkWA;
+  // Buka langsung di tab yang sama (opsi paling aman dari blokir)
+  linkToko.target = "_self"; 
+  
+  // Masukkan elemen ke halaman, klik otomatis, lalu hapus lagi
+  document.body.appendChild(linkToko);
+  linkToko.click();
+  document.body.removeChild(linkToko);
+
+  // Kosongkan keranjang belanja HANYA setelah perintah klik di atas dieksekusi
+  setTimeout(() => {
+    keranjang = [];
+    simpanDanUpdateKeranjang();
+  }, 500); // Diberi jeda setengah detik agar browser sempat memproses perpindahan ke WA
   }
       
     function simpanDanUpdateKeranjang() {
