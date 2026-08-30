@@ -197,6 +197,24 @@
   <h3>Selamat-Ber-Belanja</h3>
 </div>
 
+  <!-- Tombol Terapung Keranjang Belanja -->
+<button onclick="bukaTutupKeranjang()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 15px; background: #28a745; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  🛒 <span id="total-item-keranjang" style="background: red; border-radius: 50%; padding: 2px 7px; font-size: 12px; margin-left: 5px;">0</span>
+</button>
+
+<!-- Sisi Tampilan Keranjang (Awalnya Tersembunyi) -->
+<div id="kotak-keranjang" style="display: none; position: fixed; top: 0; right: 0; width: 300px; height: 100%; background: white; box-shadow: -2px 0 5px rgba(0,0,0,0.5); z-index: 999; padding: 20px; overflow-y: auto;">
+  <h2>Keranjang Belanja</h2>
+  <hr>
+  <div id="daftar-item-keranjang">
+    <!-- Item yang dibeli akan muncul di sini via JavaScript -->
+  </div>
+  <hr>
+  <h3>Total: Rp <span id="total-harga-keranjang">0</span></h3>
+  <button onclick="bukaTutupKeranjang()" style="background: #6c757d; color: white; width: 100%; padding: 10px; margin-bottom: 10px; border: none; border-radius: 5px; cursor: pointer;">Lanjut Belanja</button>
+  <button onclick="checkoutWhatsApp()" style="background: #25d366; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Pesan via WhatsApp</button>
+</div>
+
 <div class="container" id="produk-container">
   <!-- Produk dari Firebase akan otomatis muncul di sini -->
 </div>
@@ -276,8 +294,8 @@
     .rgb-aktif {
         animation: efekRGB 4s linear infinite;
     }
-</style>
-
+  </style>
+  
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, query, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -298,9 +316,8 @@
     // 1. MESIN BACA PRODUK
     const db = getFirestore(app);
     
-        // 2. MESIN NOTIFIKASI
+    // 2. MESIN NOTIFIKASI
     const messaging = getMessaging(app);
-    // GANTI DENGAN VAPID KEY ASLI DARI FIREBASE BOS
     const vapidKey = "BOX3hOccp6xEzMKiii-TRsrgTa3v4NC-tt3PEq0mZlqsD4yIoxHEJun29yoYenZw6iQDv13dYlPA4_O5dYhaLyo"; 
 
     function requestNotificationPermission() {
@@ -311,7 +328,6 @@
             if (currentToken) {
               console.log('Token HP:', currentToken);
               
-              // INI KODE WAJIB BUAT SIMPAN TOKEN KE FIREBASE!
               addDoc(collection(db, "tokens"), {
                 token: currentToken,
                 createdAt: new Date()
@@ -331,16 +347,134 @@
       });
     }
 
-    // Jalankan minta izin notifikasi (CUMA SEKALI)
     requestNotificationPermission();
 
-    // Dengerin notifikasi saat pembeli lagi buka web (CUMA SEKALI)
     onMessage(messaging, (payload) => {
       console.log('Notifikasi masuk:', payload);
       alert("🔔 " + payload.notification.title + "\n" + payload.notification.body);
     });
+
+    // ========================================================
+    // 🛒 SISTEM LOGIKA KERANJANG BELANJA (MENGGUNAKAN MODUL)
+    // ========================================================
+    let keranjang = JSON.parse(localStorage.getItem('keranjang_mas_gondrong')) || [];
+
+    // Daftarkan fungsi ke objek window agar bisa dipanggil dari HTML (onclick)
+    window.bukaTutupKeranjang = function() {
+      const kotak = document.getElementById('kotak-keranjang');
+      if (kotak) {
+        kotak.style.display = kotak.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    window.tambahKeKeranjang = function(idProduk, namaProduk, hargaProduk) {
+      // Membersihkan teks harga dari karakter non-angka jika ada (misal: "Rp 50.000" -> 50000)
+      let hargaBersih = parseInt(String(hargaProduk).replace(/[^0-9]/g, '')) || 0;
       
-    // 3. FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE (CUMA SEKALI)
+      const produkEksis = keranjang.find(item => item.id === idProduk);
+
+      if (produkEksis) {
+        produkEksis.jumlah += 1;
+      } else {
+        keranjang.push({
+          id: idProduk,
+          nama: namaProduk,
+          harga: hargaBersih,
+          jumlah: 1
+        });
+      }
+
+      simpanDanUpdateKeranjang();
+      
+      // Efek visual membuka keranjang otomatis setelah klik beli
+      const kotak = document.getElementById('kotak-keranjang');
+      if (kotak) kotak.style.display = 'block';
+    }
+
+    window.ubahJumlah = function(idProduk, perubahan) {
+      const produk = keranjang.find(item => item.id === idProduk);
+      if (!produk) return;
+
+      produk.jumlah += perubahan;
+
+      if (produk.jumlah <= 0) {
+        keranjang = keranjang.filter(item => item.id !== idProduk);
+      }
+
+      simpanDanUpdateKeranjang();
+    }
+
+    window.checkoutWhatsApp = function() {
+      if (keranjang.length === 0) {
+        alert("Keranjang Anda masih kosong!");
+        return;
+      }
+
+      let pesan = `Halo Mas Gondrong, saya mau pesan:\n\n`;
+      let totalHarga = 0;
+
+      keranjang.forEach((item, index) => {
+        const subTotal = item.harga * item.jumlah;
+        totalHarga += subTotal;
+        pesan += `${index + 1}. *${item.nama}* (${item.jumlah}x) = Rp ${subTotal.toLocaleString('id-ID')}\n`;
+      });
+
+      pesan += `\n*Total Tagihan:* Rp ${totalHarga.toLocaleString('id-ID')}\n\nMohon diproses ya, terima kasih!`;
+
+      // MASUKKAN NOMOR WHATSAPP TOKO MAS GONDRONG DISINI (Gunakan kode negara tanpa tanda '+')
+      const nomorWA = "6285765850084"; 
+      const urlWA = `https://wa.me{nomorWA}?text=${encodeURIComponent(pesan)}`;
+      
+      keranjang = [];
+      simpanDanUpdateKeranjang();
+      window.open(urlWA, '_blank');
+    }
+
+    function simpanDanUpdateKeranjang() {
+      localStorage.setItem('keranjang_mas_gondrong', JSON.stringify(keranjang));
+      
+      const daftarItem = document.getElementById('daftar-item-keranjang');
+      const totalItemBadge = document.getElementById('total-item-keranjang');
+      const totalHargaLabel = document.getElementById('total-harga-keranjang');
+      
+      if (!daftarItem || !totalItemBadge || !totalHargaLabel) return;
+      
+      daftarItem.innerHTML = '';
+      let totalHarga = 0;
+      let totalItem = 0;
+
+      if (keranjang.length === 0) {
+        daftarItem.innerHTML = '<p style="color: gray; text-align:center;">Keranjang masih kosong.</p>';
+      } else {
+        keranjang.forEach(item => {
+          const subTotal = item.harga * item.jumlah;
+          totalHarga += subTotal;
+          totalItem += item.jumlah;
+
+          daftarItem.innerHTML += `
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+              <div style="max-width: 60%;">
+                <h4 style="margin: 0; font-size: 14px; text-align: left;">${item.nama}</h4>
+                <small style="color:#666;">Rp ${item.harga.toLocaleString('id-ID')} x ${item.jumlah}</small>
+              </div>
+              <div>
+                <button onclick="ubahJumlah('${item.id}', -1)" style="padding: 2px 8px; cursor:pointer;">-</button>
+                <span style="margin: 0 5px; font-weight: bold;">${item.jumlah}</span>
+                <button onclick="ubahJumlah('${item.id}', 1)" style="padding: 2px 8px; cursor:pointer;">+</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      totalItemBadge.innerText = totalItem;
+      totalHargaLabel.innerText = totalHarga.toLocaleString('id-ID');
+    }
+
+    // Jalankan pemuatan keranjang pertama kali halaman dibuka
+    simpanDanUpdateKeranjang();
+      
+    // 3. FUNGSI BACA PRODUK & TAMPILKAN KE ETALASE 
     const produkContainer = document.getElementById('produk-container');
     const q = query(collection(db, "products"));
     
@@ -350,7 +484,6 @@
         const p = doc.data();
         const id = doc.id;
         
-        // Ambil foto pertama dari kumpulan foto
         let mainImage = '';
         if (Array.isArray(p.gambar)) {
           mainImage = p.gambar[0];
@@ -358,8 +491,9 @@
           mainImage = p.gambar.split(' ')[0];
         }
 
+        // Penambahan tombol Masuk Keranjang di dalam struktur HTML Produk
         produkContainer.innerHTML += `
-          <div class="product">
+          <div class="product" style="display: flex; flex-direction: column; justify-content: space-between;">
             <a href="produk.html?id=${id}" style="text-decoration:none; color:inherit;">
               <div class="product-img-wrap">
                 <img src="${mainImage}" alt="${p.nama}" style="cursor:pointer;">
@@ -369,6 +503,10 @@
                 <p><strong>Harga: ${p.harga}</strong></p>
               </div>
             </a>
+            <!-- TOMBOL KERANJANG SINKRON DENGAN DATABASE -->
+            <button onclick="tambahKeKeranjang('${id}', '${p.nama.replace(/'/g, "\\'")}', '${p.harga}')" style="margin-top: auto; background: #28a745; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
+              + Keranjang 🛒
+            </button>
           </div>
         `;
       });
@@ -391,133 +529,4 @@ function gantiVideoIklan(event) {
   const url = URL.createObjectURL(file);
   const player = document.getElementById('videoIklanPlayer');
   player.src = url;
-  document.getElementById('videoIklanContainer').style.display = 'block';
-  player.play();
-}
-
-// Memutar video bawaan (misal: file di folder website kamu)
-function putarVideoBawaanToko() {
-  const player = document.getElementById('videoIklanPlayer');
-  // GANTI 'video-iklan.mp4' dengan nama file video iklanmu yang di-upload di GitHub
-  player.src = 'iklan.mp4'; 
-  document.getElementById('videoIklanContainer').style.display = 'block';
-  player.play().catch(() => {});
-}
-
-function tutupVideoIklan() {
-  const player = document.getElementById('videoIklanPlayer');
-  player.pause();
-  document.getElementById('videoIklanContainer').style.display = 'none';
-}
-  </script>
-
-   <script>
-    const inputAudio = document.getElementById('pilihAudio');
-    const pemutar = document.getElementById('pemutar');
-    const namaLagu = document.getElementById('namaLagu');
-    const statusAntrean = document.getElementById('statusAntrean');
-    const tombolPlay = document.getElementById('tombolPlay');
-    const tombolPrev = document.getElementById('tombolPrev');
-    const tombolNext = document.getElementById('tombolNext');
-    const progressBar = document.getElementById('progressBar');
-    const kotakMusik = document.getElementById('kotakMusik');
-
-    let daftarLagu = []; 
-    let indeksSekarang = 0; 
-
-    // Fungsi putar musik
-    function putarLaguKe(indeks) {
-        if (daftarLagu.length > 0 && indeks >= 0 && indeks < daftarLagu.length) {
-            const file = daftarLagu[indeks];
-            const urlFile = URL.createObjectURL(file);
-            
-            pemutar.src = urlFile;
-            namaLagu.innerText = file.name;
-            statusAntrean.innerText = `Lagu ${indeks + 1} dari ${daftarLagu.length}`;
-            
-            pemutar.play();
-            tombolPlay.innerText = "⏸";
-            kotakMusik.classList.add('rgb-aktif'); // Nyalakan lampu RGB saat lagu berputar
-        }
-    }
-
-    // Input File Lagu dari HP
-    inputAudio.addEventListener('change', function(event) {
-        const files = event.target.files;
-        if (files.length > 0) {
-            daftarLagu = Array.from(files); 
-            indeksSekarang = 0; 
-            putarLaguKe(indeksSekarang); 
-        }
-    });
-
-    // Tombol Next (Maju 1 Lagu)
-    tombolNext.addEventListener('click', function() {
-        if (daftarLagu.length === 0) return;
-        indeksSekarang++;
-        if (indeksSekarang >= daftarLagu.length) {
-            indeksSekarang = 0; // Balik ke lagu pertama jika sudah di ujung
-        }
-        putarLaguKe(indeksSekarang);
-    });
-
-    // Tombol Previous (Mundur 1 Lagu)
-    tombolPrev.addEventListener('click', function() {
-        if (daftarLagu.length === 0) return;
-        indeksSekarang--;
-        if (indeksSekarang < 0) {
-            indeksSekarang = daftarLagu.length - 1; // Balik ke lagu terakhir jika mundur dari nomor satu
-        }
-        putarLaguKe(indeksSekarang);
-    });
-
-    // Otomatis lanjut atau looping playlist saat lagu selesai
-    pemutar.addEventListener('ended', function() {
-        indeksSekarang++;
-        if (indeksSekarang < daftarLagu.length) {
-            putarLaguKe(indeksSekarang);
-        } else {
-            indeksSekarang = 0;
-            putarLaguKe(indeksSekarang);
-        }
-    });
-
-    // Tombol Play / Pause Manual
-    tombolPlay.addEventListener('click', function() {
-        if (daftarLagu.length === 0) return; 
-        
-        if (pemutar.paused) {
-            pemutar.play();
-            tombolPlay.innerText = "⏸";
-            kotakMusik.classList.add('rgb-aktif'); // Lampu RGB Menyala
-        } else {
-            pemutar.pause();
-            tombolPlay.innerText = "▶";
-            kotakMusik.classList.remove('rgb-aktif'); // Lampu RGB Mati saat dijeda
-        }
-    });
-
-    // Progress Bar pencari durasi
-    pemutar.addEventListener('timeupdate', function() {
-        if (pemutar.duration) {
-            const posisi = (pemutar.currentTime / pemutar.duration) * 100;
-            progressBar.value = posisi;
-        }
-    });
-
-    progressBar.addEventListener('input', function() {
-        if (pemutar.duration) {
-            const waktuBaru = (progressBar.value / 100) * pemutar.duration;
-            pemutar.currentTime = waktuBaru;
-        }
-    });
-   </script>
-  
-    <!-- PINTU RAHASIA ADMIN (Dicamouflage) -->
-  <div style="text-align: center; padding: 20px 0; background: #f0f2f5;">
-    <a href="admin.html" style="color: #ccc; font-size: 10px; text-decoration: none; opacity: 0.3;">
-      ⚙️ Admin Panel
-    </a>
-  </div>
-</body>
-</html>
+  document.getElementById('videoIklanContainer').style.display =
