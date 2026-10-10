@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mas-gondrong-v48';
+const CACHE_NAME = 'mas-gondrong-v49';
 const urlsToCache = [
   'index.html',
   'admin.html',
