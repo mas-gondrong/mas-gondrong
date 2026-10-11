@@ -180,24 +180,25 @@
     #player-container {
       max-width: 640px;
       margin: 20px auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      /* Border animasi 4 warna */
+      position: relative;
+      padding-bottom: 56.25%; /* Rasio aspek 16:9 (9/16*100%) */
+      height: 0;
       border: 4px solid;
-      border-radius: 20px; /* Sudut melengkung */
-      padding: 5px;
+      border-radius: 20px;
       animation: borderGlow 4s linear infinite;
+      overflow: hidden;
+      background: black;
     }
 
-    /* Video player */
+    /* Video player memenuhi container */
     #player {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 360px;
-      border-radius: 16px; /* Sudut melengkung video */
+      height: 100%;
+      border-radius: 16px;
       background: black;
-      overflow: hidden;
     }
 
     /* Tombol */
