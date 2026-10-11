@@ -527,24 +527,21 @@ function tutupVideoIklan() {
     });
   </script>
   <script>
-  let player;
-  const VIDEO_ID = 'NHV5LP7apgU'; // Ganti dengan video ID kamu
+  const VIDEO_IDS = ['nfghPVPu9VE', 'NHV5LP7apgU', 'tDbpDAyKAcw'];
 
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      videoId: VIDEO_ID,
-      playerVars: {
-        autoplay: 1,
-        mute: 1,
-        loop: 1,
-        playlist: VIDEO_ID,
-        controls: 1,
-        modestbranding: 1,
-        rel: 0,
-        playsinline: 1
-      }
-    });
-  }
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    playerVars: {
+      autoplay: 1,
+      mute: 1,
+      loop: 1,
+      playlist: VIDEO_IDS.join(','), // Menggabungkan semua ID menjadi satu playlist
+      controls: 1,
+      modestbranding: 1,
+      rel: 0
+    }
+  });
+}
 
   // Load YouTube IFrame API
   const tag = document.createElement('script');
